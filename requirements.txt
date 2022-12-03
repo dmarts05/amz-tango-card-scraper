@@ -1,0 +1,4 @@
+ipapi
+webdriver-manager
+selenium
+termcolor
