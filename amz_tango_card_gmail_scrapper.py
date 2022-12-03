@@ -122,10 +122,10 @@ def set_up_browser():
 
 
 def get_account_credentials():
-    """Obtains account's credentials from "account.json".
+    """Obtains account credentials from "account.json".
 
     Returns:
-        list: A list containing account's credentials.
+        list: A list containing account credentials.
     """
     try:
         account = json.load(open("account.json", "r"))[0]
@@ -152,6 +152,12 @@ def get_account_credentials():
 
 
 def get_email_credentials():
+    """Obtains email credentials from "email.json".
+
+    Returns:
+        list: A list containing email credentials.
+    """
+
     email_credentials = []
     try:
         email_credentials = json.load(open("email.json", "r"))[0]
@@ -197,9 +203,9 @@ def get_tango_credentials(username: str, password: str):
     mail.select("Inbox")
 
     # Email search
-    key = "FROM"
-    value = "microsoftrewards@email.microsoftrewards.com"
-    status, data = mail.search(None, key, value)
+    status, data = mail.search(
+        None, "FROM", "microsoftrewards@email.microsoftrewards.com"
+    )
 
     # Get IDs of emails
     ids = data[0].split()
@@ -255,8 +261,18 @@ def get_tango_credentials(username: str, password: str):
     return tango_credentials
 
 
-def get_amazon_gift_card(browser: WebDriver, credential: dict):
-    # Get to specific tango redeeming website
+def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
+    """Gets an Amazon Gift Card Code given required Tango credentials.
+
+    Args:
+        browser (WebDriver): Selenium browser.
+        credential (dict): Dictionary containing the required security code and link for redeeming a card.
+
+    Returns:
+        str: Code of the obstained card or an empty string if it failed.
+    """
+
+    # Get to designated tango redeeming website
     browser.get(credential["link"])
     time.sleep(random.uniform(2, 3))
 
@@ -282,15 +298,21 @@ def get_amazon_gift_card(browser: WebDriver, credential: dict):
         ).text
         cprint("[TANGO REDEEMER] Amazon Gift Card successfully obtained!", "green")
         return code
-    else:
-        cprint(
-            "[TANGO REDEEMER] Credentials are not valid, Amazon Gift Card not obtained!",
-            "red",
-        )
-        return ""
+
+    cprint(
+        "[TANGO REDEEMER] Credentials are not valid, Amazon Gift Card not obtained!",
+        "red",
+    )
+    return ""
 
 
 def store_codes(codes: list):
+    """Stores obtained codes in "codes.txt".
+
+    Args:
+        codes (list): A list of Amazon Gift Card codes.
+    """
+
     with open("codes.txt", "w") as f:
         for code in codes:
             f.write(code)
@@ -298,6 +320,15 @@ def store_codes(codes: list):
 
 
 def send_email(sender: str, receiver: str, password: str, codes: list):
+    """Sends an email with obtained codes.
+
+    Args:
+        sender (str): Email sender.
+        receiver (str): Email receiver.
+        password (str): Google App Password of the sender.
+        codes (list): A list of Amazon Gift Card codes.
+    """
+
     subject = "Amazon Tango Card Gmail Scrapper has obtained some codes!"
     body = "\n".join(codes)
 
@@ -341,7 +372,7 @@ def main():
                 cprint("[BROWSER] Error trying to set up browser...", "red")
                 sys.exit()
 
-            code = get_amazon_gift_card(browser, credential)
+            code = get_amazon_gift_card_code(browser, credential)
             browser.quit()
 
             if code != "":
