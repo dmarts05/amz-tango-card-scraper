@@ -2,11 +2,14 @@
 Extract Microsoft Rewards Amazon Gift Cards from Gmail automatically.
 """
 
+from email.message import EmailMessage
 import platform
 import imaplib
 import email
 import json
 import random
+import smtplib
+import ssl
 import sys
 from argparse import ArgumentParser
 import time
@@ -34,6 +37,20 @@ def argument_parser():
     parser.add_argument(
         "--headless",
         help="[Optional] Enable headless browser.",
+        action="store_true",
+        required=False,
+    )
+
+    parser.add_argument(
+        "--trash",
+        help="[Optional] Move checked emails to trash.",
+        action="store_true",
+        required=False,
+    )
+
+    parser.add_argument(
+        "--emailalerts",
+        help="[Optional] Send an email if some codes have been founds.",
         action="store_true",
         required=False,
     )
@@ -134,6 +151,29 @@ def get_account_credentials():
         sys.exit()
 
 
+def get_email_credentials():
+    email_credentials = []
+    try:
+        email_credentials = json.load(open("email.json", "r"))[0]
+    except FileNotFoundError:
+        with open("email.json", "w") as f:
+            f.write(
+                json.dumps(
+                    [
+                        {
+                            "sender": "sender@example.com",
+                            "password": "GoogleAppPassword",
+                            "receiver": "receiver@example.com",
+                        }
+                    ],
+                    indent=2,
+                )
+            )
+    finally:
+        email_credentials = json.load(open("email.json", "r"))[0]
+        return email_credentials
+
+
 def get_tango_credentials(username: str, password: str):
     """Obstains every tango credential from Microsoft emails in an account.
 
@@ -204,8 +244,10 @@ def get_tango_credentials(username: str, password: str):
                             # If it's a bytes type, decode to str
                             current_msg_id = current_msg_id.decode()
 
-                        # Move current email to trash
-                        mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
+                        arguments = argument_parser()
+                        if arguments.trash:
+                            # Move current email to trash
+                            mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
         counter += 1
 
     mail.close()
@@ -248,17 +290,33 @@ def get_amazon_gift_card(browser: WebDriver, credential: dict):
         return ""
 
 
-def store_code(code):
-    with open("codes.txt", "a") as f:
-        f.write(code + "\n")
-
-
-def clean_stored_codes():
+def store_codes(codes: list):
     with open("codes.txt", "w") as f:
-        f.write("")
+        for code in codes:
+            f.write(code)
+            f.write("\n")
 
 
-# Send email function (rework code storing)
+def send_email(sender: str, receiver: str, password: str, codes: list):
+    subject = "Amazon Tango Card Gmail Scrapper has obtained some codes!"
+    body = "\n".join(codes)
+
+    message = EmailMessage()
+    message["From"] = sender
+    message["To"] = receiver
+    message["Subject"] = subject
+    message.set_content(body)
+
+    ssl_context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as smtp:
+        try:
+            smtp.login(sender, password)
+        except:
+            cprint("[EMAIL SENDER] Incorrect email or password!", "red")
+            return
+        smtp.sendmail(sender, receiver, message.as_string())
+        cprint("[EMAIL SENDER] Email with obtanied codes sent!", "green")
 
 
 def main():
@@ -273,7 +331,7 @@ def main():
         cprint("[TANGO SCRAPPER] No cards have been found, exiting...", "red")
         sys.exit()
     else:
-        clean_stored_codes()
+        codes = []
         for credential in tango_credentials:
             # Set up Selenium browser
             try:
@@ -287,8 +345,24 @@ def main():
             browser.quit()
 
             if code != "":
-                print('[CODE STORER] Storing in "codes.txt" obtained code...')
-                store_code(code)
+                codes.append(code)
+            #     print('[CODE STORER] Storing in "codes.txt" obtained code...')
+            #     store_code(code)
+
+        if codes:
+            # Send email alerts if codes have been found and email alerts have been activated
+            arguments = argument_parser()
+            if arguments.emailalerts:
+                email_credentials = get_email_credentials()
+                send_email(
+                    email_credentials["sender"],
+                    email_credentials["receiver"],
+                    email_credentials["password"],
+                    codes,
+                )
+
+            # If codes have been found, store them in "codes.txt"
+            store_codes(codes)
 
 
 if __name__ == "__main__":

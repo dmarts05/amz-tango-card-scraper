@@ -1,0 +1,7 @@
+[
+  {
+    "sender": "sender@example.com",
+    "password": "GoogleAppPassword",
+    "receiver": "receiver@example.com"
+  }
+]
