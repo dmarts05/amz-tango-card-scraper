@@ -180,12 +180,38 @@ def get_email_credentials():
         return email_credentials
 
 
-def get_tango_credentials(username: str, password: str):
+def get_from_addresses():
+    """Obtains every allowed from email address from "from.json" to filter from.
+
+    Returns:
+        list: A list containing every allowed email address to filter from.
+    """
+    try:
+        from_addresses = json.load(open("from.json", "r"))
+    except FileNotFoundError:
+        with open("from.json", "w") as f:
+            f.write(
+                json.dumps(
+                    [
+                        {
+                            "email": "microsoftrewards@email.microsoftrewards.com",
+                        }
+                    ],
+                    indent=2,
+                )
+            )
+    finally:
+        from_addresses = json.load(open("from.json", "r"))
+        return from_addresses
+
+
+def get_tango_credentials(username: str, password: str, from_address: str):
     """Obstains every tango credential from Microsoft emails in an account.
 
     Args:
         username (str): Account's Gmail email
         password (str): Account's Google App Password
+        from_address (str): Email that will serve as a FROM filter when scrapping emails
 
     Returns:
         list: List containing scrapped tango credentials
@@ -203,9 +229,7 @@ def get_tango_credentials(username: str, password: str):
     mail.select("Inbox")
 
     # Email search
-    status, data = mail.search(
-        None, "FROM", "microsoftrewards@email.microsoftrewards.com"
-    )
+    status, data = mail.search(None, "FROM", from_address)
 
     # Get IDs of emails
     ids = data[0].split()
@@ -228,13 +252,29 @@ def get_tango_credentials(username: str, password: str):
                 for part in current_msg.walk():
                     text = part.get_payload()
 
-                    security_code = text.split(
-                        "</div><div class='tango-credential-value'>", 1
-                    )[1].split("<", 1)[0]
+                    # Check if the text has multiple parts
+                    if isinstance(text, list):
+                        # This probably means that the text has been forwarded
+                        # We will need to use a different way of getting our Tango credentials
 
-                    link = text.split(
-                        "</div><div class='tango-credential-key'><a href='", 1
-                    )[1].split("'", 1)[0]
+                        text = text[-1].get_payload().replace("=\r\n", "")
+
+                        security_code = text.split('tango-credential-value">')[4].split(
+                            "<", 1
+                        )[0]
+
+                        link = text.split('tango-credential-key"><a href=3D"', 1)[
+                            1
+                        ].split('"', 1)[0]
+                    else:
+
+                        security_code = text.split(
+                            "</div><div class='tango-credential-value'>", 1
+                        )[1].split("<", 1)[0]
+
+                        link = text.split(
+                            "</div><div class='tango-credential-key'><a href='", 1
+                        )[1].split("'", 1)[0]
 
                     # Check required elements have been found
                     if security_code and link:
@@ -254,6 +294,8 @@ def get_tango_credentials(username: str, password: str):
                         if arguments.trash:
                             # Move current email to trash
                             mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
+
+                        break
         counter += 1
 
     mail.close()
@@ -314,6 +356,7 @@ def store_codes(codes: list):
     """
 
     with open("codes.txt", "w") as f:
+        cprint('[CODE STORER] Storing codes in "codes.txt"...', "green")
         for code in codes:
             f.write(code)
             f.write("\n")
@@ -347,7 +390,7 @@ def send_email(sender: str, receiver: str, password: str, codes: list):
             cprint("[EMAIL SENDER] Incorrect email or password!", "red")
             return
         smtp.sendmail(sender, receiver, message.as_string())
-        cprint("[EMAIL SENDER] Email with obtanied codes sent!", "green")
+        cprint("[EMAIL SENDER] Sending email with obtained codes...", "green")
 
 
 def main():
@@ -356,44 +399,51 @@ def main():
     """
 
     account = get_account_credentials()
-    tango_credentials = get_tango_credentials(account["username"], account["password"])
+    from_addresses = get_from_addresses()
 
-    if not tango_credentials:
-        cprint("[TANGO SCRAPPER] No cards have been found, exiting...", "red")
-        sys.exit()
-    else:
-        codes = []
-        for credential in tango_credentials:
-            # Set up Selenium browser
-            try:
-                browser = set_up_browser()
-            except Exception:
-                print(traceback.format_exc())
-                cprint("[BROWSER] Error trying to set up browser...", "red")
-                sys.exit()
+    codes = []
+    for from_address in from_addresses:
+        tango_credentials = get_tango_credentials(
+            account["username"], account["password"], from_address["email"]
+        )
 
-            code = get_amazon_gift_card_code(browser, credential)
-            browser.quit()
+        if not tango_credentials:
+            cprint(
+                "[TANGO SCRAPPER] No gift cards have been found, trying with next FROM address...",
+                "red",
+            )
+            continue
+        else:
+            for credential in tango_credentials:
+                # Set up Selenium browser
+                try:
+                    browser = set_up_browser()
+                except Exception:
+                    print(traceback.format_exc())
+                    cprint("[BROWSER] Error trying to set up browser...", "red")
+                    sys.exit()
 
-            if code != "":
-                codes.append(code)
-            #     print('[CODE STORER] Storing in "codes.txt" obtained code...')
-            #     store_code(code)
+                code = get_amazon_gift_card_code(browser, credential)
+                browser.quit()
 
-        if codes:
-            # Send email alerts if codes have been found and email alerts have been activated
-            arguments = argument_parser()
-            if arguments.emailalerts:
-                email_credentials = get_email_credentials()
-                send_email(
-                    email_credentials["sender"],
-                    email_credentials["receiver"],
-                    email_credentials["password"],
-                    codes,
-                )
+                if code != "":
+                    codes.append(code)
 
-            # If codes have been found, store them in "codes.txt"
-            store_codes(codes)
+    # Check if we have obtained any codes
+    if codes:
+        # Send email alerts if codes have been found and email alerts have been activated
+        arguments = argument_parser()
+        if arguments.emailalerts:
+            email_credentials = get_email_credentials()
+            send_email(
+                email_credentials["sender"],
+                email_credentials["receiver"],
+                email_credentials["password"],
+                codes,
+            )
+
+        # If codes have been found, store them in "codes.txt"
+        store_codes(codes)
 
 
 if __name__ == "__main__":

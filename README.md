@@ -5,6 +5,7 @@ An automated solution for getting Amazon Gift Card codes from Microsoft Rewards 
 ## Installation
 
 - Clone the repo.
+
 - Install requirements with the following command:
 
 ```
@@ -32,6 +33,19 @@ pip install -r requirements.txt
     "sender": "sender@example.com",
     "password": "GoogleAppPassword",
     "receiver": "receiver@example.com"
+  }
+]
+```
+
+- Edit from.json.sample with the emails that will be able to send you Microsoft Tango Card emails (you can set up email forwarding to a single account, so this can be useful). Don't forget to rename it removing .sample at the end. The syntax is the following:
+
+```json
+[
+  {
+    "email": "microsoftrewards@email.microsoftrewards.com"
+  },
+  {
+    "email": "email@example.com"
   }
 ]
 ```
