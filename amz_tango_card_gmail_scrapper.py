@@ -16,6 +16,7 @@ import time
 import traceback
 
 import ipapi
+import pyotp
 
 from termcolor import cprint
 
@@ -214,7 +215,7 @@ def get_tango_credentials(username: str, password: str, from_address: str):
         from_address (str): Email that will serve as a FROM filter when scrapping emails
 
     Returns:
-        list: List containing scrapped tango credentials
+        list: A list containing scrapped tango credentials
     """
     # URL for IMAP connection
     imap_url = "imap.gmail.com"
@@ -263,24 +264,31 @@ def get_tango_credentials(username: str, password: str, from_address: str):
                             "<", 1
                         )[0]
 
-                        link = text.split('tango-credential-key"><a href=3D"', 1)[
+                        tango_link = text.split('tango-credential-key"><a href=3D"', 1)[
                             1
                         ].split('"', 1)[0]
+
                     else:
 
                         security_code = text.split(
                             "</div><div class='tango-credential-value'>", 1
                         )[1].split("<", 1)[0]
 
-                        link = text.split(
+                        tango_link = text.split(
                             "</div><div class='tango-credential-key'><a href='", 1
                         )[1].split("'", 1)[0]
 
+                    amazon_link = (
+                        "https://www.amazon."
+                        + text.split("http://www.amazon.", 1)[1].split("/", 1)[0]
+                    )
+
                     # Check required elements have been found
-                    if security_code and link:
+                    if security_code and tango_link and amazon_link:
                         tango_credential = {
                             "security_code": security_code,
-                            "link": link,
+                            "tango_link": tango_link,
+                            "amazon_link": amazon_link,
                         }
 
                         tango_credentials.append(tango_credential)
@@ -311,11 +319,11 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
         credential (dict): Dictionary containing the required security code and link for redeeming a card.
 
     Returns:
-        str: Code of the obstained card or an empty string if it failed.
+        dict: Dictionary containing the code of an Amazon Gift Card and its Amazon Geo Link or an empty dictionary if it failed.
     """
 
     # Get to designated tango redeeming website
-    browser.get(credential["link"])
+    browser.get(credential["tango_link"])
     time.sleep(random.uniform(2, 3))
 
     print("[TANGO REDEEMER] Writing security code...")
@@ -338,23 +346,28 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
             By.XPATH,
             value="/html/body/div[1]/div[1]/main/div/div/div/div/div[1]/div/div[1]/div[2]/div[2]/div/div/div/div[1]/div/div[2]/span",
         ).text
+        code_info = {
+            "code": code,
+            "amazon_link": credential["amazon_link"],
+        }
         cprint("[TANGO REDEEMER] Amazon Gift Card successfully obtained!", "green")
-        return code
+        return code_info
 
     cprint(
         "[TANGO REDEEMER] Credentials are not valid, Amazon Gift Card not obtained!",
         "red",
     )
-    return ""
+    return {}
 
 
-def store_codes(codes: list):
+def store_codes(codes_info: list):
     """Stores obtained codes in "codes.txt".
 
     Args:
-        codes (list): A list of Amazon Gift Card codes.
+        codes_info (list): A list of Amazon Gift Card codes.
     """
 
+    codes = map(lambda code_info: code_info["code"], codes_info)
     with open("codes.txt", "w") as f:
         cprint('[CODE STORER] Storing codes in "codes.txt"...', "green")
         for code in codes:
@@ -362,18 +375,24 @@ def store_codes(codes: list):
             f.write("\n")
 
 
-def send_email(sender: str, receiver: str, password: str, codes: list):
+def send_email(sender: str, receiver: str, password: str, codes_info: list):
     """Sends an email with obtained codes.
 
     Args:
         sender (str): Email sender.
         receiver (str): Email receiver.
         password (str): Google App Password of the sender.
-        codes (list): A list of Amazon Gift Card codes.
+        codes_info (list): A list of Amazon Gift Card codes.
     """
 
+    codes = map(lambda code_info: code_info["code"], codes_info)
     subject = "Amazon Tango Card Gmail Scrapper has obtained some codes!"
-    body = "\n".join(codes)
+    body = (
+        "\n".join(codes)
+        + "\n Redeem them through this link: "
+        + codes_info[0]["amazon_link"]
+        + "/gc/redeem"
+    )
 
     message = EmailMessage()
     message["From"] = sender
@@ -386,11 +405,84 @@ def send_email(sender: str, receiver: str, password: str, codes: list):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as smtp:
         try:
             smtp.login(sender, password)
+            smtp.sendmail(sender, receiver, message.as_string())
+            cprint("[EMAIL SENDER] Sending email with obtained codes...", "green")
         except:
             cprint("[EMAIL SENDER] Incorrect email or password!", "red")
             return
-        smtp.sendmail(sender, receiver, message.as_string())
-        cprint("[EMAIL SENDER] Sending email with obtained codes...", "green")
+
+
+def get_otp_code(otp_key: str):
+    """Obtains an OTP code for the given key.
+
+    Args:
+        otp_key (str): Key that will generate the OTP code.
+
+    Returns:
+        int: OTP code for the given key.
+    """
+
+    return pyotp.TOTP(otp_key).now()
+
+
+def sign_in_amazon(
+    browser: WebDriver, email: str, pwd: str, otp_key: str, amazon_geo_link: str
+):
+    """Signs in the specified account using its credentials on Amazon.
+
+    Args:
+        browser (WebDriver): Selenium browser that will be used.
+        email (str): Account's email.
+        pwd (str): Account's password.
+        otp_key (str): Account's OTP key.
+    """
+
+    # Access to amazon.com and get login form
+    browser.get("https://www.amazon.com/")
+    browser.get(
+        browser.find_element(
+            By.XPATH,
+            value="/html/body/div[1]/header/div/div[3]/div[3]/div[2]/div/div[1]/div/a",
+        ).get_attribute("href")
+    )
+    time.sleep(random.uniform(2, 3))
+
+    print("[SIGN IN] Writing email...")
+    browser.find_element(By.ID, value="ap_email").send_keys(email)
+
+    print("[SIGN IN] Writing password...")
+    browser.find_element(By.ID, value="continue").click()
+    time.sleep(random.uniform(2, 3))
+    browser.find_element(By.ID, value="ap_password").send_keys(pwd)
+
+    # Sign in (first step)
+    browser.find_element(By.ID, value="signInSubmit").click()
+    time.sleep(random.uniform(2, 3))
+
+    print("[SIGN IN] Writing OTP...")
+    try:
+        otp_code = get_otp_code(otp_key)
+    except Exception:
+        print(traceback.format_exc())
+        cprint("[SIGN IN] Error, malformed OTP key, exiting...", "red")
+        sys.exit()
+    browser.find_element(By.ID, value="auth-mfa-otpcode").send_keys(otp_code)
+
+    # Sign in (second step)
+    browser.find_element(By.ID, value="auth-signin-button").click()
+    time.sleep(random.uniform(2, 3))
+
+    # Check if we have managed to successfully sign in
+    if browser.find_elements(
+        By.XPATH, value="/html/body/div[1]/div[1]/div[2]/div/div[1]/div/div/div"
+    ):
+        # We are still in OTP verification form, OTP code is not valid
+        cprint("[SIGN IN] Error, OTP code is not valid, exiting...", "red")
+        sys.exit()
+
+
+def redeem_amazon_gift_card_code():
+    return
 
 
 def main():
@@ -401,7 +493,7 @@ def main():
     account = get_account_credentials()
     from_addresses = get_from_addresses()
 
-    codes = []
+    codes_info = []
     for from_address in from_addresses:
         tango_credentials = get_tango_credentials(
             account["username"], account["password"], from_address["email"]
@@ -423,14 +515,14 @@ def main():
                     cprint("[BROWSER] Error trying to set up browser...", "red")
                     sys.exit()
 
-                code = get_amazon_gift_card_code(browser, credential)
+                code_info = get_amazon_gift_card_code(browser, credential)
                 browser.quit()
 
-                if code != "":
-                    codes.append(code)
+                if code_info:
+                    codes_info.append(code_info)
 
     # Check if we have obtained any codes
-    if codes:
+    if codes_info:
         # Send email alerts if codes have been found and email alerts have been activated
         arguments = argument_parser()
         if arguments.emailalerts:
@@ -439,11 +531,14 @@ def main():
                 email_credentials["sender"],
                 email_credentials["receiver"],
                 email_credentials["password"],
-                codes,
+                codes_info,
             )
 
         # If codes have been found, store them in "codes.txt"
-        store_codes(codes)
+        store_codes(codes_info)
+
+        # Start auto-redeem in Amazon
+        # sign_in_amazon()
 
 
 if __name__ == "__main__":
