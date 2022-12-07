@@ -25,8 +25,6 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-# TODO: Remove sys.exit()
-
 
 def argument_parser():
     """Gets arguments from command line (--headless, ...)"""
@@ -395,11 +393,24 @@ def send_email(sender: str, receiver: str, password: str, codes_info: list):
         codes_info (list): A list of Amazon Gift Card codes.
     """
 
-    codes = map(lambda code_info: code_info["code"], codes_info)
+    arguments = argument_parser()
     subject = "Amazon Tango Card Gmail Scrapper has obtained some codes!"
-    body = (
-        "\n".join(codes)
-        + "\n Redeem them through this link: "
+
+    # Set body contents depending on whether the user has enabled auto-redeem
+    body = ""
+    if arguments.redeem:
+        for code_info in codes_info:
+            correctly_redeemed = code_info["redeemed"]
+            if correctly_redeemed:
+                body += code_info["code"] + "\n"
+            else:
+                body += code_info["code"] + " (couldn't be redeemed)\n"
+    else:
+        for code_info in codes_info:
+            body += code_info["code"] + "\n"
+
+    body += (
+        "\nYou can try to redeem them yourself through this link: "
         + codes_info[0]["amazon_link"]
         + "/gc/redeem"
     )
@@ -476,23 +487,23 @@ def get_otp_code(otp_key: str):
         int: OTP code for the given key.
     """
 
-    return pyotp.TOTP(otp_key).now()
+    return pyotp.TOTP(otp_key.strip().replace(" ", "")).now()
 
 
 def sign_in_amazon(
-    browser: WebDriver, email: str, pwd: str, otp_key: str, amazon_geo_link: str
+    browser: WebDriver, username: str, pwd: str, otp_key: str, amazon_geo_link: str
 ):
     """Signs in the specified account using its credentials on Amazon.
 
     Args:
         browser (WebDriver): Selenium browser that will be used.
-        email (str): Account's email.
+        username (str): Account's email.
         pwd (str): Account's password.
         otp_key (str): Account's OTP key.
     """
 
     # Access to amazon.com and get login form
-    browser.get("https://www.amazon.com/")
+    browser.get(amazon_geo_link)
     browser.get(
         browser.find_element(
             By.XPATH,
@@ -502,7 +513,7 @@ def sign_in_amazon(
     time.sleep(random.uniform(2, 3))
 
     print("[SIGN IN] Writing email...")
-    browser.find_element(By.ID, value="ap_email").send_keys(email)
+    browser.find_element(By.ID, value="ap_email").send_keys(username)
 
     print("[SIGN IN] Writing password...")
     browser.find_element(By.ID, value="continue").click()
@@ -559,10 +570,14 @@ def redeem_amazon_gift_card_code(browser: WebDriver, code_info: dict):
     browser.find_element(By.ID, value="gc-redemption-apply-button").click()
     time.sleep(random.uniform(2, 3))
 
-    # Check if code has been  correctly redeemed
+    # Check if code has been correctly redeemed
     if browser.find_elements(By.ID, value="gc-redemption-error"):
-        cprint("[AMAZON REDEEMER] " + code_info["code"] + " was not valid!", "red")
+        code_info["redeemed"] = False
+        cprint(
+            "[AMAZON REDEEMER] " + code_info["code"] + " couldn't be redeemed!", "red"
+        )
     else:
+        code_info["redeemed"] = True
         cprint(
             "[AMAZON REDEEMER] " + code_info["code"] + " was successfully redeemed!",
             "green",
@@ -606,16 +621,7 @@ def main():
 
     # Check if any codes have been obtained
     if codes_info:
-        # Send email alerts if codes have been found and if email alerts have been activated
         arguments = argument_parser()
-        if arguments.emailalerts:
-            email_credentials = get_email_credentials()
-            send_email(
-                email_credentials["sender"],
-                email_credentials["receiver"],
-                email_credentials["password"],
-                codes_info,
-            )
 
         # If codes have been found, store them in "codes.txt"
         store_codes(codes_info)
@@ -623,7 +629,6 @@ def main():
         # Start auto-redeem in Amazon if the argument is present
         if arguments.redeem:
             if isSameAmazonGeoLinkForEachCode(codes_info):
-                browser = set_up_browser()
                 amazon_account = get_amazon_account_credentials()
 
                 sign_in_amazon(
@@ -636,13 +641,23 @@ def main():
 
                 for code_info in codes_info:
                     redeem_amazon_gift_card_code(browser, code_info)
-                browser.quit()
             else:
                 cprint(
-                    "[AMAZON REDEEMER] Every code must come from the same localization, exiting...",
+                    "[AMAZON REDEEMER] Every code must come from the same localization, skipping auto-redeem...",
                     "red",
                 )
-                sys.exit()
+
+        # Send email alerts if codes have been found and if email alerts have been activated
+        if arguments.emailalerts:
+            email_credentials = get_email_credentials()
+            send_email(
+                email_credentials["sender"],
+                email_credentials["receiver"],
+                email_credentials["password"],
+                codes_info,
+            )
+
+        browser.quit()
 
 
 if __name__ == "__main__":
