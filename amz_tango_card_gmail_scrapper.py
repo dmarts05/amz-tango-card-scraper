@@ -433,7 +433,15 @@ def send_email(sender: str, receiver: str, password: str, codes_info: list):
             return
 
 
-def isSameAmazonGeoLinkForEachCode(codes_info: list):
+def is_same_amazon_geo_link_for_each_code(codes_info: list):
+    """Checks if every code comes from the same location
+
+    Args:
+        codes_info (list): List of dictionaries that contain a code and its location
+
+    Returns:
+        boolean: True if every code comes from the same location, False if that's not the case
+    """
     amazon_link = codes_info[0]["amazon_link"]
     for code_info in codes_info:
         if code_info["amazon_link"] != amazon_link:
@@ -443,10 +451,10 @@ def isSameAmazonGeoLinkForEachCode(codes_info: list):
 
 
 def get_amazon_account_credentials():
-    """Obtains amazon account's credentials from "amazon.json".
+    """Obtains Amazon account's credentials from "amazon.json".
 
     Returns:
-        list: A list containing amazon account's credentials.
+        list: A list containing Amazon account's credentials.
     """
 
     try:
@@ -628,7 +636,7 @@ def main():
 
         # Start auto-redeem in Amazon if the argument is present
         if arguments.redeem:
-            if isSameAmazonGeoLinkForEachCode(codes_info):
+            if is_same_amazon_geo_link_for_each_code(codes_info):
                 amazon_account = get_amazon_account_credentials()
 
                 sign_in_amazon(
