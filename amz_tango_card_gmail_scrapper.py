@@ -25,6 +25,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
+# TODO: Remove sys.exit()
+
 
 def argument_parser():
     """Gets arguments from command line (--headless, ...)"""
@@ -52,6 +54,13 @@ def argument_parser():
     parser.add_argument(
         "--emailalerts",
         help="[Optional] Send an email if some codes have been founds.",
+        action="store_true",
+        required=False,
+    )
+
+    parser.add_argument(
+        "--redeem",
+        help="[Optional] Redeem obtained codes in Amazon",
         action="store_true",
         required=False,
     )
@@ -206,13 +215,13 @@ def get_from_addresses():
         return from_addresses
 
 
-def get_tango_credentials(username: str, password: str, from_address: str):
+def get_tango_credentials(username: str, password: str, from_addresses: list):
     """Obstains every tango credential from Microsoft emails in an account.
 
     Args:
         username (str): Account's Gmail email
         password (str): Account's Google App Password
-        from_address (str): Email that will serve as a FROM filter when scrapping emails
+        from_addresses (list): List of emails that will serve as a FROM filter when scrapping emails
 
     Returns:
         list: A list containing scrapped tango credentials
@@ -229,82 +238,83 @@ def get_tango_credentials(username: str, password: str, from_address: str):
     # Select Inbox to fetch emails
     mail.select("Inbox")
 
-    # Email search
-    status, data = mail.search(None, "FROM", from_address)
-
-    # Get IDs of emails
-    ids = data[0].split()
-
-    # Capture all messages from emails
-    messages = []
-    for id in ids:
-        status, data = mail.fetch(id, "(RFC822)")
-        messages.append(data)
-
-    # Get tango security codes and links from each message
     tango_credentials = []
-    counter = 0
-    for message in messages:
-        for response_part in message:
-            if isinstance(response_part, tuple):
-                current_msg = email.message_from_bytes(response_part[1])
+    for from_address in from_addresses:
+        # Email search
+        status, data = mail.search(None, "FROM", from_address["email"])
 
-                # Get code and link from the body of the email
-                for part in current_msg.walk():
-                    text = part.get_payload()
+        # Get IDs of emails
+        ids = data[0].split()
 
-                    # Check if the text has multiple parts
-                    if isinstance(text, list):
-                        # This probably means that the text has been forwarded
-                        # We will need to use a different way of getting our Tango credentials
+        # Capture all messages from emails
+        messages = []
+        for id in ids:
+            status, data = mail.fetch(id, "(RFC822)")
+            messages.append(data)
 
-                        text = text[-1].get_payload().replace("=\r\n", "")
+        # Get tango security codes and links from each message
+        counter = 0
+        for message in messages:
+            for response_part in message:
+                if isinstance(response_part, tuple):
+                    current_msg = email.message_from_bytes(response_part[1])
 
-                        security_code = text.split('tango-credential-value">')[4].split(
-                            "<", 1
-                        )[0]
+                    # Get code and link from the body of the email
+                    for part in current_msg.walk():
+                        text = part.get_payload()
 
-                        tango_link = text.split('tango-credential-key"><a href=3D"', 1)[
-                            1
-                        ].split('"', 1)[0]
+                        # Check if the text has multiple parts
+                        if isinstance(text, list):
+                            # This probably means that the text has been forwarded
+                            # We will need to use a different way of getting our Tango credentials
 
-                    else:
+                            text = text[-1].get_payload().replace("=\r\n", "")
 
-                        security_code = text.split(
-                            "</div><div class='tango-credential-value'>", 1
-                        )[1].split("<", 1)[0]
+                            security_code = text.split('tango-credential-value">')[
+                                4
+                            ].split("<", 1)[0]
 
-                        tango_link = text.split(
-                            "</div><div class='tango-credential-key'><a href='", 1
-                        )[1].split("'", 1)[0]
+                            tango_link = text.split(
+                                'tango-credential-key"><a href=3D"', 1
+                            )[1].split('"', 1)[0]
 
-                    amazon_link = (
-                        "https://www.amazon."
-                        + text.split("http://www.amazon.", 1)[1].split("/", 1)[0]
-                    )
+                        else:
 
-                    # Check required elements have been found
-                    if security_code and tango_link and amazon_link:
-                        tango_credential = {
-                            "security_code": security_code,
-                            "tango_link": tango_link,
-                            "amazon_link": amazon_link,
-                        }
+                            security_code = text.split(
+                                "</div><div class='tango-credential-value'>", 1
+                            )[1].split("<", 1)[0]
 
-                        tango_credentials.append(tango_credential)
+                            tango_link = text.split(
+                                "</div><div class='tango-credential-key'><a href='", 1
+                            )[1].split("'", 1)[0]
 
-                        current_msg_id = ids[counter]
-                        if isinstance(current_msg_id, bytes):
-                            # If it's a bytes type, decode to str
-                            current_msg_id = current_msg_id.decode()
+                        amazon_link = (
+                            "https://www.amazon."
+                            + text.split("http://www.amazon.", 1)[1].split("/", 1)[0]
+                        )
 
-                        arguments = argument_parser()
-                        if arguments.trash:
-                            # Move current email to trash
-                            mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
+                        # Check required elements have been found
+                        if security_code and tango_link and amazon_link:
+                            tango_credential = {
+                                "security_code": security_code,
+                                "tango_link": tango_link,
+                                "amazon_link": amazon_link,
+                            }
 
-                        break
-        counter += 1
+                            tango_credentials.append(tango_credential)
+
+                            current_msg_id = ids[counter]
+                            if isinstance(current_msg_id, bytes):
+                                # If it's a bytes type, decode to str
+                                current_msg_id = current_msg_id.decode()
+
+                            arguments = argument_parser()
+                            if arguments.trash:
+                                # Move current email to trash
+                                mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
+
+                            break
+            counter += 1
 
     mail.close()
     mail.logout()
@@ -412,6 +422,50 @@ def send_email(sender: str, receiver: str, password: str, codes_info: list):
             return
 
 
+def isSameAmazonGeoLinkForEachCode(codes_info: list):
+    amazon_link = codes_info[0]["amazon_link"]
+    for code_info in codes_info:
+        if code_info["amazon_link"] != amazon_link:
+            return False
+
+    return True
+
+
+def get_amazon_account_credentials():
+    """Obtains amazon account's credentials from "amazon.json".
+
+    Returns:
+        list: A list containing amazon account's credentials.
+    """
+
+    try:
+        account = json.load(open("amazon.json", "r"))[0]
+        cprint("[AMAZON ACCOUNT LOADER] Amazon account successfully loaded.", "green")
+        return account
+    except FileNotFoundError:
+        with open("amazon.json", "w") as f:
+            f.write(
+                json.dumps(
+                    [
+                        {
+                            "username": "email@example.com",
+                            "password": "pass1234",
+                            "otp": "OtpAmazonCode",
+                        }
+                    ],
+                    indent=2,
+                )
+            )
+            cprint(
+                '[AMAZON ACCOUNT LOADER] "amazon.json" not found, creating file...',
+                "red",
+            )
+            print(
+                '[AMAZON ACCOUNT LOADER] Please fill you account creadentials in "amazon.json" and rerun the script. Exiting...'
+            )
+            sys.exit()
+
+
 def get_otp_code(otp_key: str):
     """Obtains an OTP code for the given key.
 
@@ -481,8 +535,38 @@ def sign_in_amazon(
         sys.exit()
 
 
-def redeem_amazon_gift_card_code():
-    return
+def redeem_amazon_gift_card_code(browser: WebDriver, code_info: dict):
+    """Automatically redeems in Amazon a given code (user must already be signed in).
+
+    Args:
+        browser (WebDriver): Selenium browser that will be used.
+        code_info (dict): Dictionary that contains the code that will be redeemed
+                          and its Amazon Geo Link.
+    """
+
+    # Get to gift card redeeming site (already signed in)
+    browser.get(code_info["amazon_link"] + "/gc/redeem")
+    time.sleep(random.uniform(2, 3))
+
+    print("[AMAZON REDEEMER] Writing code...")
+    browser.find_element(By.ID, value="gc-redemption-input").send_keys(
+        code_info["code"]
+    )
+
+    # TODO: Check for captchas and circunvent them
+
+    print("[AMAZON REDEEMER] Redeeming code...")
+    browser.find_element(By.ID, value="gc-redemption-apply-button").click()
+    time.sleep(random.uniform(2, 3))
+
+    # Check if code has been  correctly redeemed
+    if browser.find_elements(By.ID, value="gc-redemption-error"):
+        cprint("[AMAZON REDEEMER] " + code_info["code"] + " was not valid!", "red")
+    else:
+        cprint(
+            "[AMAZON REDEEMER] " + code_info["code"] + " was successfully redeemed!",
+            "green",
+        )
 
 
 def main():
@@ -494,36 +578,35 @@ def main():
     from_addresses = get_from_addresses()
 
     codes_info = []
-    for from_address in from_addresses:
-        tango_credentials = get_tango_credentials(
-            account["username"], account["password"], from_address["email"]
+
+    tango_credentials = get_tango_credentials(
+        account["username"], account["password"], from_addresses
+    )
+
+    if not tango_credentials:
+        cprint(
+            "[TANGO SCRAPPER] No gift cards have been found, exiting...",
+            "red",
         )
+        sys.exit()
 
-        if not tango_credentials:
-            cprint(
-                "[TANGO SCRAPPER] No gift cards have been found, trying with next FROM address...",
-                "red",
-            )
-            continue
-        else:
-            for credential in tango_credentials:
-                # Set up Selenium browser
-                try:
-                    browser = set_up_browser()
-                except Exception:
-                    print(traceback.format_exc())
-                    cprint("[BROWSER] Error trying to set up browser...", "red")
-                    sys.exit()
+    # Set up Selenium browser
+    try:
+        browser = set_up_browser()
+    except Exception:
+        print(traceback.format_exc())
+        cprint("[BROWSER] Error trying to set up browser...", "red")
+        sys.exit()
 
-                code_info = get_amazon_gift_card_code(browser, credential)
-                browser.quit()
+    for tango_credential in tango_credentials:
+        code_info = get_amazon_gift_card_code(browser, tango_credential)
 
-                if code_info:
-                    codes_info.append(code_info)
+        if code_info:
+            codes_info.append(code_info)
 
-    # Check if we have obtained any codes
+    # Check if any codes have been obtained
     if codes_info:
-        # Send email alerts if codes have been found and email alerts have been activated
+        # Send email alerts if codes have been found and if email alerts have been activated
         arguments = argument_parser()
         if arguments.emailalerts:
             email_credentials = get_email_credentials()
@@ -537,8 +620,29 @@ def main():
         # If codes have been found, store them in "codes.txt"
         store_codes(codes_info)
 
-        # Start auto-redeem in Amazon
-        # sign_in_amazon()
+        # Start auto-redeem in Amazon if the argument is present
+        if arguments.redeem:
+            if isSameAmazonGeoLinkForEachCode(codes_info):
+                browser = set_up_browser()
+                amazon_account = get_amazon_account_credentials()
+
+                sign_in_amazon(
+                    browser,
+                    amazon_account["username"],
+                    amazon_account["password"],
+                    amazon_account["otp"],
+                    codes_info[0]["amazon_link"],
+                )
+
+                for code_info in codes_info:
+                    redeem_amazon_gift_card_code(browser, code_info)
+                browser.quit()
+            else:
+                cprint(
+                    "[AMAZON REDEEMER] Every code must come from the same localization, exiting...",
+                    "red",
+                )
+                sys.exit()
 
 
 if __name__ == "__main__":

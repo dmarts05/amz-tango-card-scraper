@@ -1,4 +1,5 @@
 ipapi
+pyotp
 webdriver-manager
 selenium
 termcolor
