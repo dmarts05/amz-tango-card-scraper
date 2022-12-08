@@ -58,7 +58,7 @@ def argument_parser():
 
     parser.add_argument(
         "--redeem",
-        help="[Optional] Redeem obtained codes in Amazon",
+        help="[Optional] Redeem obtained codes in Amazon (WIP).",
         action="store_true",
         required=False,
     )
