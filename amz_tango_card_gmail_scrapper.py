@@ -402,9 +402,9 @@ def send_email(sender: str, receiver: str, password: str, codes_info: list):
         for code_info in codes_info:
             correctly_redeemed = code_info["redeemed"]
             if correctly_redeemed:
-                body += code_info["code"] + "\n"
+                body += code_info["code"] + " - ✅ Redeemed.\n"
             else:
-                body += code_info["code"] + " (couldn't be redeemed)\n"
+                body += code_info["code"] + " - ❎ Not redeemed.\n"
     else:
         for code_info in codes_info:
             body += code_info["code"] + "\n"
