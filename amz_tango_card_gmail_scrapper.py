@@ -639,16 +639,22 @@ def main():
             if is_same_amazon_geo_link_for_each_code(codes_info):
                 amazon_account = get_amazon_account_credentials()
 
-                sign_in_amazon(
-                    browser,
-                    amazon_account["username"],
-                    amazon_account["password"],
-                    amazon_account["otp"],
-                    codes_info[0]["amazon_link"],
-                )
+                try:
+                    sign_in_amazon(
+                        browser,
+                        amazon_account["username"],
+                        amazon_account["password"],
+                        amazon_account["otp"],
+                        codes_info[0]["amazon_link"],
+                    )
 
-                for code_info in codes_info:
-                    redeem_amazon_gift_card_code(browser, code_info)
+                    for code_info in codes_info:
+                        redeem_amazon_gift_card_code(browser, code_info)
+                except Exception:
+                    cprint(
+                        "[AMAZON REDEEMER] Amazon has detected that we are using a bot, stopping auto-redeem...",
+                        "red",
+                    )
             else:
                 cprint(
                     "[AMAZON REDEEMER] Every code must come from the same localization, skipping auto-redeem...",
