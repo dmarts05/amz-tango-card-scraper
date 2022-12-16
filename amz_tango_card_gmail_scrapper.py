@@ -357,6 +357,7 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
         code_info = {
             "code": code,
             "amazon_link": credential["amazon_link"],
+            "redeemed": False,
         }
         cprint("[TANGO REDEEMER] Amazon Gift Card successfully obtained!", "green")
         return code_info
