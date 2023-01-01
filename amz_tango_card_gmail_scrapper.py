@@ -332,7 +332,8 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
 
     # Get to designated tango redeeming website
     browser.get(credential["tango_link"])
-    time.sleep(random.uniform(2, 3))
+    # Long sleep time due to Tango "human verification"
+    time.sleep(random.uniform(5, 8))
 
     print("[TANGO REDEEMER] Writing security code...")
     browser.find_element(By.ID, value="input-45").send_keys(credential["security_code"])
