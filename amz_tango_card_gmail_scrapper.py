@@ -25,6 +25,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
+from pyvirtualdisplay import Display
+
 
 def argument_parser():
     """Gets arguments from command line (--headless, ...)"""
@@ -40,6 +42,12 @@ def argument_parser():
         help="[Optional] Enable headless browser.",
         action="store_true",
         required=False,
+    )
+
+    parser.add_argument(
+        "--fakeheadless",
+        help="[Optional] Enable headless browser through a virtual display (Linux servers only). Avoid using headless and fakeheadless modes together.",
+        action="store_true",
     )
 
     parser.add_argument(
@@ -598,6 +606,17 @@ def main():
     """
     Extract Microsoft Rewards Amazon Gift Cards from Gmail automatically.
     """
+    # Get used arguments
+    arguments = argument_parser()
+
+    # Enable virtual display if fakeheadless argument is present and if headless argument is not present (Linux only)
+    if (
+        platform.system() == "Linux"
+        and arguments.fakeheadless
+        and not arguments.headless
+    ):
+        display = Display(visible=0, size=(800, 600))
+        display.start()
 
     account = get_account_credentials()
     from_addresses = get_from_addresses()
@@ -631,8 +650,6 @@ def main():
 
     # Check if any codes have been obtained
     if codes_info:
-        arguments = argument_parser()
-
         # If codes have been found, store them in "codes.txt"
         store_codes(codes_info)
 

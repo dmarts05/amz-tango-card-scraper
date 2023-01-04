@@ -69,6 +69,7 @@ pip install -r requirements.txt
 ## Optional arguments
 
 - `--headless ` Run the script in headless mode.
+- `--fakeheadless` Run the script in headless mode through a virtual display (Linux servers only). Avoid using headless and fakeheadless modes together.
 - `--trash` Move to trash read emails.
 - `--emailalerts` Enable GMAIL email alerts when obtaining codes.
 - `--redeem` Redeem obtained codes in amazon (WIP).

@@ -3,3 +3,4 @@ pyotp
 webdriver-manager
 selenium
 termcolor
+pyvirtualdisplay
