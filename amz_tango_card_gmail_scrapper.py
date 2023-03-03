@@ -344,7 +344,10 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
     time.sleep(random.uniform(5, 8))
 
     print("[TANGO REDEEMER] Writing security code...")
-    browser.find_element(By.ID, value="input-45").send_keys(credential["security_code"])
+    browser.find_element(
+        By.XPATH,
+        value="/html/body/div[1]/div/main/div/div/div/div/div[1]/div/div/div[2]/div[2]/div/div/form/div[1]/div/div/div[1]/div/input",
+    ).send_keys(credential["security_code"])
     time.sleep(random.uniform(1, 2))
 
     print("[TANGO REDEEMER] Getting Amazon Gift Card...")
