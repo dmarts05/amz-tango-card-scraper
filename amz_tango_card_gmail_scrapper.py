@@ -39,34 +39,34 @@ def argument_parser():
 
     parser.add_argument(
         "--headless",
-        help="[Optional] Enable headless browser.",
+        help="Enable headless browser.",
         action="store_true",
         required=False,
     )
 
     parser.add_argument(
         "--fakeheadless",
-        help="[Optional] Enable headless browser through a virtual display (Linux servers only). Avoid using headless and fakeheadless modes together.",
+        help="Enable headless browser through a virtual display (Linux servers only). Avoid using headless and fakeheadless modes together.",
         action="store_true",
     )
 
     parser.add_argument(
         "--trash",
-        help="[Optional] Move checked emails to trash.",
+        help="Move checked emails to trash.",
         action="store_true",
         required=False,
     )
 
     parser.add_argument(
         "--emailalerts",
-        help="[Optional] Send an email if some codes have been founds.",
+        help="Send an email if some codes have been founds.",
         action="store_true",
         required=False,
     )
 
     parser.add_argument(
         "--redeem",
-        help="[Optional] Redeem obtained codes in Amazon (WIP).",
+        help="Redeem obtained codes in Amazon (WIP).",
         action="store_true",
         required=False,
     )
@@ -341,21 +341,21 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
     # Get to designated tango redeeming website
     browser.get(credential["tango_link"])
     # Long sleep time due to Tango "human verification"
-    time.sleep(random.uniform(5, 8))
+    time.sleep(random.uniform(8, 11))
 
     print("[TANGO REDEEMER] Writing security code...")
     browser.find_element(
         By.XPATH,
         value="/html/body/div[1]/div/main/div/div/div/div/div[1]/div/div/div[2]/div[2]/div/div/form/div[1]/div/div/div[1]/div/input",
     ).send_keys(credential["security_code"])
-    time.sleep(random.uniform(1, 2))
+    time.sleep(random.uniform(5, 8))
 
     print("[TANGO REDEEMER] Getting Amazon Gift Card...")
     browser.find_element(
         By.XPATH,
         value="/html/body/div[1]/div/main/div/div/div/div/div[1]/div/div/div[2]/div[2]/div/div/form/div[2]/button",
     ).click()
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     # Check if card was correctly redeemed
     if browser.find_elements(
@@ -531,19 +531,19 @@ def sign_in_amazon(
             value="/html/body/div[1]/header/div/div[3]/div[3]/div[2]/div/div[1]/div/a",
         ).get_attribute("href")
     )
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     print("[SIGN IN] Writing email...")
     browser.find_element(By.ID, value="ap_email").send_keys(username)
 
     print("[SIGN IN] Writing password...")
     browser.find_element(By.ID, value="continue").click()
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
     browser.find_element(By.ID, value="ap_password").send_keys(pwd)
 
     # Sign in (first step)
     browser.find_element(By.ID, value="signInSubmit").click()
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     print("[SIGN IN] Writing OTP...")
     try:
@@ -556,7 +556,7 @@ def sign_in_amazon(
 
     # Sign in (second step)
     browser.find_element(By.ID, value="auth-signin-button").click()
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     # Check if we have managed to successfully sign in
     if browser.find_elements(
@@ -578,7 +578,7 @@ def redeem_amazon_gift_card_code(browser: WebDriver, code_info: dict):
 
     # Get to gift card redeeming site (already signed in)
     browser.get(code_info["amazon_link"] + "/gc/redeem")
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     print("[AMAZON REDEEMER] Writing code...")
     browser.find_element(By.ID, value="gc-redemption-input").send_keys(
@@ -589,7 +589,7 @@ def redeem_amazon_gift_card_code(browser: WebDriver, code_info: dict):
 
     print("[AMAZON REDEEMER] Redeeming code...")
     browser.find_element(By.ID, value="gc-redemption-apply-button").click()
-    time.sleep(random.uniform(2, 3))
+    time.sleep(random.uniform(5, 8))
 
     # Check if code has been correctly redeemed
     if browser.find_elements(By.ID, value="gc-redemption-error"):
