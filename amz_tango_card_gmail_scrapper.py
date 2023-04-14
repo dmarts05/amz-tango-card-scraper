@@ -296,7 +296,8 @@ def get_tango_credentials(username: str, password: str, from_addresses: list):
 
                         amazon_link = (
                             "https://www.amazon."
-                            + text.split("http://www.amazon.", 1)[1].split("/", 1)[0]
+                            + text.split("http://www.amazon.",
+                                         1)[1].split("/", 1)[0]
                         )
 
                         # Check required elements have been found
@@ -317,7 +318,8 @@ def get_tango_credentials(username: str, password: str, from_addresses: list):
                             arguments = argument_parser()
                             if arguments.trash:
                                 # Move current email to trash
-                                mail.store(current_msg_id, "+X-GM-LABELS", "\\Trash")
+                                mail.store(current_msg_id,
+                                           "+X-GM-LABELS", "\\Trash")
 
                             break
             counter += 1
@@ -348,7 +350,6 @@ def get_amazon_gift_card_code(browser: WebDriver, credential: dict):
         By.XPATH,
         value="/html/body/div[1]/div/main/div/div/div/div/div[1]/div/div/div[2]/div[2]/div/div/form/div[1]/div/div/div[1]/div/input",
     ).send_keys(credential["security_code"])
-    time.sleep(random.uniform(5, 8))
 
     print("[TANGO REDEEMER] Getting Amazon Gift Card...")
     browser.find_element(
@@ -523,14 +524,15 @@ def sign_in_amazon(
         otp_key (str): Account's OTP key.
     """
 
-    # Access to amazon.com and get login form
-    browser.get(amazon_geo_link)
-    browser.get(
-        browser.find_element(
-            By.XPATH,
-            value="/html/body/div[1]/header/div/div[3]/div[3]/div[2]/div/div[1]/div/a",
-        ).get_attribute("href")
-    )
+    # Strip https and www from amazon_geo_link
+    amazon_geo_link = amazon_geo_link.replace(
+        "https://", "").replace("www.", "")
+
+    # Get to amazon login page
+    print(amazon_geo_link)
+    link = "https://www.{}/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.{}%2F%3Fref_%3Dnav_ya_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=esflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&".format(
+        amazon_geo_link, amazon_geo_link)
+    browser.get(link)
     time.sleep(random.uniform(5, 8))
 
     print("[SIGN IN] Writing email...")
@@ -589,18 +591,20 @@ def redeem_amazon_gift_card_code(browser: WebDriver, code_info: dict):
 
     print("[AMAZON REDEEMER] Redeeming code...")
     browser.find_element(By.ID, value="gc-redemption-apply-button").click()
-    time.sleep(random.uniform(5, 8))
+    time.sleep(random.uniform(1, 2))
 
     # Check if code has been correctly redeemed
     if browser.find_elements(By.ID, value="gc-redemption-error"):
         code_info["redeemed"] = False
         cprint(
-            "[AMAZON REDEEMER] " + code_info["code"] + " couldn't be redeemed!", "red"
+            "[AMAZON REDEEMER] " + code_info["code"] +
+            " couldn't be redeemed!", "red"
         )
     else:
         code_info["redeemed"] = True
         cprint(
-            "[AMAZON REDEEMER] " + code_info["code"] + " was successfully redeemed!",
+            "[AMAZON REDEEMER] " + code_info["code"] +
+            " was successfully redeemed!",
             "green",
         )
 
@@ -673,6 +677,7 @@ def main():
                     for code_info in codes_info:
                         redeem_amazon_gift_card_code(browser, code_info)
                 except Exception:
+                    print(traceback.format_exc())
                     cprint(
                         "[AMAZON REDEEMER] Amazon has detected that we are using a bot, stopping auto-redeem...",
                         "red",
