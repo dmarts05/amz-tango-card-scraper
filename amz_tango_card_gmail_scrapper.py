@@ -222,7 +222,7 @@ def get_from_addresses():
 
 
 def get_tango_credentials(username: str, password: str, from_addresses: list):
-    """Obstains every tango credential from Microsoft emails in an account.
+    """Obtains every tango credential from Microsoft emails in an account.
 
     Args:
         username (str): Account's Gmail email
@@ -300,7 +300,7 @@ def get_tango_credentials(username: str, password: str, from_addresses: list):
                                          1)[1].split("/", 1)[0]
                         )
 
-                        # Check required elements have been found
+                        # check required elements have been found
                         if security_code and tango_link and amazon_link:
                             tango_credential = {
                                 "security_code": security_code,
@@ -312,14 +312,14 @@ def get_tango_credentials(username: str, password: str, from_addresses: list):
 
                             current_msg_id = ids[counter]
                             if isinstance(current_msg_id, bytes):
-                                # If it's a bytes type, decode to str
+                                # if it's a bytes type, decode to str
                                 current_msg_id = current_msg_id.decode()
 
                             arguments = argument_parser()
                             if arguments.trash:
-                                # Move current email to trash
+                                # move current email to trash
                                 mail.store(current_msg_id,
-                                           "+X-GM-LABELS", "\\Trash")
+                                           "+x-gm-labels", "\\trash")
 
                             break
             counter += 1
@@ -529,7 +529,6 @@ def sign_in_amazon(
         "https://", "").replace("www.", "")
 
     # Get to amazon login page
-    print(amazon_geo_link)
     link = "https://www.{}/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.{}%2F%3Fref_%3Dnav_ya_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=esflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&".format(
         amazon_geo_link, amazon_geo_link)
     browser.get(link)
