@@ -319,8 +319,7 @@ def get_tango_credentials(username: str, password: str, from_addresses: list):
                             if arguments.trash:
                                 # move current email to trash
                                 mail.store(current_msg_id,
-                                           "+x-gm-labels", "\\trash")
-
+                                           "+X-GM-LABELS", "\\Trash")
                             break
             counter += 1
 
