@@ -2,7 +2,7 @@
 
 import os
 
-from gmail_scraper import GmailScraper
+from gmail_scraper import scrape_tango_cards
 from utils.config_reader import ConfigReader
 from utils.schemas import ConfigFile
 
@@ -62,12 +62,12 @@ def main() -> None:
     print("[INFO] Configuration file read successfully")
 
     # Scrape Tango Cards from Gmail
-    gmail_scraper = GmailScraper(
-        config.gmail.get("email", ""), config.gmail.get("app_password", "")
-    )
     print("[INFO] Scraping Tango Cards from Gmail...")
-    tango_cards = gmail_scraper.scrape_tango_cards(
-        config.from_list, config.script.get("trash", False)
+    tango_cards = scrape_tango_cards(
+        config.gmail.get("email", ""),
+        config.gmail.get("app_password", ""),
+        config.from_list,
+        config.script.get("trash", False),
     )
     print("[INFO] Tango Cards scraped successfully")
     print(tango_cards)
