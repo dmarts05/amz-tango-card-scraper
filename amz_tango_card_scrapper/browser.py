@@ -25,7 +25,7 @@ class ChromeBrowser:
         self._browser = None
 
     def __enter__(self) -> Chrome:
-        self.browser = (
+        self._browser = (
             Chrome(options=self._options)
             if self._no_webdriver_manager
             else Chrome(
@@ -33,7 +33,7 @@ class ChromeBrowser:
                 options=self._options,
             )
         )
-        return self.browser
+        return self._browser
 
     def __exit__(self) -> None:
         if self._browser:
