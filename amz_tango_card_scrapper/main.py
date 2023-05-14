@@ -4,7 +4,7 @@ import os
 
 from gmail_scraper import GmailScraper
 from utils.config_reader import ConfigReader
-from utils.types import ConfigFile
+from utils.schemas import ConfigFile
 
 
 def get_config_file_path(file_name: str) -> str:

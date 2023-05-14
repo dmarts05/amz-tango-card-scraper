@@ -2,7 +2,7 @@ import email
 import imaplib
 from typing import List
 
-from utils.types import TangoCard
+from utils.schemas import TangoCard
 
 IMAP_GMAIL_URL = "imap.gmail.com"
 EMAIL_FORMAT = "(RFC822)"

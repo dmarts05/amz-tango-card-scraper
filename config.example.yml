@@ -7,7 +7,7 @@ gmail:
   app_password: myGoogleAppPassword123
 
 # Amazon account information for automatic code redemption
-# This is only required if you want to automatically redeem Amazon codes
+# This is only required if you want to automatically redeem Amazon codes, otherwise leave it as is
 # Note: You must enable 2FA for your Amazon account with OTP and put that generator in the OTP field: https://www.amazon.com/gp/help/customer/display.html?nodeId=G3PWZPU52FKN7PW4
 amazon:
   email: example@email.com

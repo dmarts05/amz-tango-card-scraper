@@ -3,7 +3,7 @@
 from typing import Dict, List
 
 import yaml
-from utils.types import ConfigFile
+from utils.schemas import ConfigFile
 
 
 class ConfigReader:
@@ -20,7 +20,7 @@ class ConfigReader:
         - gmail: a dictionary with the following keys:
             - email: the email address of the Gmail account to use
             - app_password: the app password of the Gmail account to use
-        - [Optional] amazon: a dictionary with the following keys:
+        - amazon: a dictionary with the following keys:
             - email: the email address of the Amazon account to use
             - password: the password of the Amazon account to use
             - otp: the OTP of the Amazon account to use
@@ -30,8 +30,9 @@ class ConfigReader:
             - no_images: whether to disable images in the Selenium browser
             - headless: whether to run the Selenium browser in headless mode
             - trash: whether to trash the Tango Card emails after redeeming
-            - redeem: whether to automatically redeem the Tango Cards in
+            - redeem_amz: whether to automatically redeem the Tango Cards in
                       Amazon after scraping them
+            - no_webdriver_manaher: whether to disable webdriver manager
 
         Raises:
             - ValueError: if the config file is invalid
@@ -46,12 +47,8 @@ class ConfigReader:
             # Verify and extract Gmail section
             gmail = self._verify_gmail_section(yaml_config.get("gmail", {}))
 
-            # Verify and extract Amazon section (if present)
-            amazon = None
-            if "amazon" in yaml_config:
-                amazon = self._verify_amazon_section(
-                    yaml_config.get("amazon", {})
-                )
+            # Verify and extract Amazon section
+            amazon = self._verify_amazon_section(yaml_config.get("amazon", {}))
 
             # Verify and extract From section
             from_list = self._verify_from_section(yaml_config.get("from", []))
