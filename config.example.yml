@@ -26,5 +26,5 @@ script:
   no_images: True # Set to True to disable image loading in Selenium
   headless: True # Set to True to run Selenium in headless mode
   trash: False # Set to True to move checked emails to trash
-  redeem: True # Set to True to redeem Amazon codes automatically
+  redeem_amz: True # Set to True to redeem Amazon codes automatically
   no_webdriver_manager: False # Set to True to disable webdriver_manager
