@@ -91,7 +91,13 @@ class ConfigReader:
     def _verify_script_section(
         self, script: Dict[str, bool]
     ) -> Dict[str, bool]:
-        required_fields = ("no_images", "headless", "trash", "redeem")
+        required_fields = (
+            "no_images",
+            "headless",
+            "trash",
+            "redeem",
+            "no_webdriver_manager",
+        )
         if not all(field in script for field in required_fields):
             raise ValueError(
                 "Missing required field(s) in Script section of config file."
