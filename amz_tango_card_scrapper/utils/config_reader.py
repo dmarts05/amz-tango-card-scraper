@@ -1,8 +1,9 @@
 """Module for reading the config file."""
 
-import yaml
+from typing import Dict, List, cast
 
-from typing import Dict, List, Union, cast
+import yaml
+from utils.types import ConfigFile
 
 
 class ConfigReader:
@@ -11,7 +12,7 @@ class ConfigReader:
 
     def read_config(
         self,
-    ) -> Dict[str, Union[Dict[str, str], List[str], Dict[str, bool]]]:
+    ) -> ConfigFile:
         """
         Reads the config file and returns a dictionary with the following keys:
         - gmail: a dictionary with the following keys:
@@ -58,10 +59,7 @@ class ConfigReader:
             script = self._verify_script_section(yaml_config["script"])
             config["script"] = script
 
-        return cast(
-            Dict[str, Union[Dict[str, str], List[str], Dict[str, bool]]],
-            config,
-        )
+        return cast(ConfigFile, config)
 
     def _verify_gmail_section(self, gmail: Dict[str, str]) -> Dict[str, str]:
         required_fields = ("email", "app_password")
