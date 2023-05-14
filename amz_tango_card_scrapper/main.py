@@ -2,8 +2,9 @@
 
 import os
 
-from amz_tango_card_scrapper.config_reader import ConfigReader
-from amz_tango_card_scrapper.types import ConfigFile
+from gmail_scraper import GmailScraper
+from utils.config_reader import ConfigReader
+from utils.types import ConfigFile
 
 
 def get_config_file_path(file_name: str) -> str:
@@ -47,8 +48,20 @@ def get_config(file_name: str) -> ConfigFile:
 
 def main() -> None:
     # Get program configuration
+    print("[INFO] Reading configuration file...")
     config = get_config("config.yml")
-    print(config)
+    print("[INFO] Configuration file read successfully")
+
+    # Scrape Tango Cards from Gmail
+    gmail_scraper = GmailScraper(
+        config.gmail.get("email", ""), config.gmail.get("app_password", "")
+    )
+    print("[INFO] Scraping Tango Cards from Gmail...")
+    tango_cards = gmail_scraper.scrape_tango_cards(
+        config.from_list, config.script.get("trash", False)
+    )
+    print("[INFO] Tango Cards scraped successfully")
+    print(tango_cards)
 
 
 if __name__ == "__main__":
