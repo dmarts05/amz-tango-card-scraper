@@ -27,6 +27,15 @@ def get_config_file_path(file_name: str) -> str:
 
 
 def get_config(file_name: str) -> ConfigFile:
+    """
+    Returns the configuration of the program.
+
+    Args:
+        file_name: the name of the config file
+
+    Returns:
+        The configuration of the program
+    """
     try:
         # Get path to config file
         config_file_path = get_config_file_path(file_name)
