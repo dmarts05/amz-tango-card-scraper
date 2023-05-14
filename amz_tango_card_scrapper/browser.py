@@ -1,6 +1,9 @@
 import platform
-from selenium.webdriver import Chrome, ChromeOptions
+
 import requests
+from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like"
@@ -9,14 +12,27 @@ USER_AGENT = (
 
 
 class ChromeBrowser:
-    def __init__(self, headless: bool = True, no_images: bool = True) -> None:
-        self._options = self._build_browser_options(
-            headless=headless, no_images=no_images
-        )
+    def __init__(
+        self,
+        headless: bool = True,
+        no_images: bool = True,
+        no_webdriver_manager: bool = False,
+    ) -> None:
+        self._headless = headless
+        self._no_images = no_images
+        self._no_webdriver_manager = no_webdriver_manager
+        self._options = self._build_browser_options()
         self._browser = None
 
     def __enter__(self) -> Chrome:
-        self.browser = Chrome(options=self._options)
+        self.browser = (
+            Chrome(options=self._options)
+            if self._no_webdriver_manager
+            else Chrome(
+                service=Service(ChromeDriverManager().install()),
+                options=self._options,
+            )
+        )
         return self.browser
 
     def __exit__(self) -> None:
@@ -41,9 +57,7 @@ class ChromeBrowser:
 
         return lang
 
-    def _build_browser_options(
-        self, headless: bool, no_images: bool
-    ) -> ChromeOptions:
+    def _build_browser_options(self) -> ChromeOptions:
         options = ChromeOptions()
 
         # Add user agent and language to the browser options
@@ -63,7 +77,7 @@ class ChromeBrowser:
             "webrtc.nonproxied_udp_enabled": False,
         }
         # Add no images option if specified
-        if no_images:
+        if self._no_images:
             prefs["profile.managed_default_content_settings.images"] = 2
         options.add_experimental_option("prefs", prefs)  # type: ignore
         options.add_experimental_option("useAutomationExtension", False)  # type: ignore # noqa
@@ -71,7 +85,7 @@ class ChromeBrowser:
             "excludeSwitches", ["enable-automation"]
         )
         # Add headless option if specified
-        if headless:
+        if self._headless:
             options.add_argument("--headless")  # type: ignore
 
         # Add options specific to Linux
