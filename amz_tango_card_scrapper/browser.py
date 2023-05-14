@@ -1,3 +1,5 @@
+"""Module for creating Selenium Chrome browser instances."""
+
 import platform
 
 import requests
