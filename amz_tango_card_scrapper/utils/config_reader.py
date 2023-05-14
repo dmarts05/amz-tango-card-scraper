@@ -95,7 +95,7 @@ class ConfigReader:
             "no_images",
             "headless",
             "trash",
-            "redeem",
+            "redeem_amz",
             "no_webdriver_manager",
         )
         if not all(field in script for field in required_fields):
