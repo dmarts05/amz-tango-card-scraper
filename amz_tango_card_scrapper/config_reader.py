@@ -3,7 +3,7 @@
 from typing import Dict, List, cast
 
 import yaml
-from utils.types import ConfigFile
+from amz_tango_card_scrapper.types import ConfigFile
 
 
 class ConfigReader:
