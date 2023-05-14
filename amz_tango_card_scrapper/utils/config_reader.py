@@ -1,12 +1,14 @@
 """Module for reading the config file."""
 
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import yaml
-from amz_tango_card_scrapper.types import ConfigFile
+from utils.types import ConfigFile
 
 
 class ConfigReader:
+    """A class for reading an checking the config file."""
+
     def __init__(self, config_path: str) -> None:
         self._config_path = config_path
 
@@ -38,28 +40,28 @@ class ConfigReader:
             A dictionary with the keys described above
         """
 
-        config = {}
         with open(self._config_path, "r") as f:
             yaml_config = yaml.safe_load(f)
 
             # Verify and extract Gmail section
-            gmail = self._verify_gmail_section(yaml_config["gmail"])
-            config["gmail"] = gmail
+            gmail = self._verify_gmail_section(yaml_config.get("gmail", {}))
 
             # Verify and extract Amazon section (if present)
+            amazon = None
             if "amazon" in yaml_config:
-                amazon = self._verify_amazon_section(yaml_config["amazon"])
-                config["amazon"] = amazon
+                amazon = self._verify_amazon_section(
+                    yaml_config.get("amazon", {})
+                )
 
             # Verify and extract From section
-            from_list = self._verify_from_section(yaml_config["from"])
-            config["from"] = from_list
+            from_list = self._verify_from_section(yaml_config.get("from", []))
 
             # Verify and extract Script section
-            script = self._verify_script_section(yaml_config["script"])
-            config["script"] = script
+            script = self._verify_script_section(yaml_config.get("script", {}))
 
-        return cast(ConfigFile, config)
+        return ConfigFile(
+            gmail=gmail, amazon=amazon, from_list=from_list, script=script
+        )
 
     def _verify_gmail_section(self, gmail: Dict[str, str]) -> Dict[str, str]:
         required_fields = ("email", "app_password")
