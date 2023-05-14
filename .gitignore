@@ -1,6 +1,2 @@
-.env
-account.json
-amazon.json
-email.json
-from.json
+config.yml
 codes.txt
