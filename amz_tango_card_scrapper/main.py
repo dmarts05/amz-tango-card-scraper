@@ -1,7 +1,9 @@
+"""Module containing the main function of the program."""
+
 import os
 
-from utils.config_reader import ConfigReader
-from utils.types import ConfigFile
+from amz_tango_card_scrapper.config_reader import ConfigReader
+from amz_tango_card_scrapper.types import ConfigFile
 
 
 def get_config_file_path(file_name: str) -> str:
