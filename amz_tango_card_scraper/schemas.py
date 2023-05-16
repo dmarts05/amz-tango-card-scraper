@@ -31,3 +31,15 @@ class TangoCard(NamedTuple):
     security_code: str
     tango_link: str
     amazon_link: str
+
+
+class AmazonCard(NamedTuple):
+    """
+    A schema that represents an amazon gift card.
+
+    redeem_code: the code of the amazon gift card
+    amazon_link: the link that will be used to redeem the amazon gift card
+    """
+
+    redeem_code: str
+    amazon_link: str
