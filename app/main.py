@@ -3,8 +3,8 @@
 import os
 
 from gmail_scraper import scrape_tango_cards
-from utils.config_reader import ConfigReader
-from utils.schemas import ConfigFile
+from config_reader import ConfigReader
+from schemas import ConfigFile
 
 
 def get_config_file_path(file_name: str) -> str:

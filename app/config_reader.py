@@ -3,7 +3,7 @@
 from typing import Dict, List
 
 import yaml
-from utils.schemas import ConfigFile
+from schemas import ConfigFile
 
 
 class ConfigReader:
