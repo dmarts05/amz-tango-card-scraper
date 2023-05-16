@@ -1,4 +1,4 @@
-# Amazon Tango Card Gmail Scrapper
+# Amazon Tango Card Gmail Scraper
 
 An automated solution for getting Amazon Gift Card codes from Microsoft Rewards emails.
 
