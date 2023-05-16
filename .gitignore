@@ -1,3 +1,4 @@
 config.yml
 codes.txt
 __pycache__
+.venv

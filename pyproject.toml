@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "amz-tango-card-scraper"
+version = "0.1.0"
+description = ""
+authors = ["dmarts05 <dmarts05@estudiantes.unileon.es>"]
+readme = "README.md"
+packages = [{include = "amz_tango_card_scraper"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.30.0"
+selenium = "^4.9.1"
+webdriver-manager = "^3.8.6"
+pyyaml = "^6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
