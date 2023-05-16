@@ -4,7 +4,7 @@ import email as em
 import imaplib
 from typing import List
 
-from app.schemas import TangoCard
+from schemas import TangoCard
 
 IMAP_GMAIL_URL = "imap.gmail.com"
 EMAIL_FORMAT = "(RFC822)"
