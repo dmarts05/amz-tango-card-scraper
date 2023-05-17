@@ -1,10 +1,12 @@
 """Module containing the main function of the program."""
 
 import os
+from amz_tango_card_scraper.browser import get_browser
 
 from gmail_scraper import scrape_tango_cards
 from config_reader import ConfigReader
 from schemas import ConfigFile
+from tango_scraper import scrap_amazon_gift_cards
 
 
 def get_config_file_path(file_name: str) -> str:
@@ -70,7 +72,22 @@ def main() -> None:
         config.script.get("trash", False),
     )
     print("[INFO] Tango Cards scraped successfully")
-    print(tango_cards)
+
+    # Get Selenium browser
+    browser = get_browser(
+        config.script.get("headless", True),
+        config.script.get("no_images", True),
+        config.script.get("no_webdriver_manager", False),
+    )
+
+    # Scrape Amazon gift card codes from Tango Cards
+    print("[INFO] Scraping Amazon gift card codes from Tango Cards...")
+    amazon_cards = scrap_amazon_gift_cards(browser, tango_cards)
+    print("[INFO] Amazon gift card codes scraped successfully")
+    print(amazon_cards)
+
+    # Close Selenium browser
+    browser.quit()
 
 
 if __name__ == "__main__":
