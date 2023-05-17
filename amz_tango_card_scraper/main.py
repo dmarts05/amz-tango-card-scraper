@@ -84,7 +84,10 @@ def main() -> None:
     print("[INFO] Scraping Amazon gift card codes from Tango Cards...")
     amazon_cards = scrap_amazon_gift_cards(browser, tango_cards)
     print("[INFO] Amazon gift card codes scraped successfully")
-    print(amazon_cards)
+
+    # Print Amazon gift card codes
+    amazon_cards_str = "\n".join([str(card) for card in amazon_cards])
+    print(amazon_cards_str)
 
     # Close Selenium browser
     browser.quit()

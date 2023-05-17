@@ -32,6 +32,18 @@ class TangoCard(NamedTuple):
     tango_link: str
     amazon_link: str
 
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the tango card.
+
+        Returns:
+            A string representation of the tango card
+        """
+        return (
+            f"[Tango Card]\nSecurity code: {self.security_code}\nTango link:"
+            f" {self.tango_link}\nAmazon link: {self.amazon_link}"
+        )
+
 
 class AmazonCard(NamedTuple):
     """
@@ -43,3 +55,15 @@ class AmazonCard(NamedTuple):
 
     redeem_code: str
     amazon_link: str
+
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the amazon gift card.
+
+        Returns:
+            A string representation of the amazon gift card
+        """
+        return (
+            f"[Amazon Gift Card]\nRedeem code: {self.redeem_code}\nAmazon"
+            f" link: {self.amazon_link}"
+        )
