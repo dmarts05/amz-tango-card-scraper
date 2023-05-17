@@ -1,6 +1,5 @@
 from typing import List
 
-import time
 from browser import wait_for_element
 from schemas import AmazonCard, TangoCard
 from selenium.webdriver.chrome.webdriver import WebDriver
