@@ -1,10 +1,14 @@
 """Module for handling the configuration file."""
 
-from .config_handler_helpers import parse_config
-from schemas import ConfigFile
+from typing import TYPE_CHECKING
+
+from .helpers import parse_config
+
+if TYPE_CHECKING:
+    from app.utils.schemas import ConfigFile
 
 
-def get_config(file_path: str) -> ConfigFile:
+def get_config(file_path: str) -> "ConfigFile":
     """
     Get the config file.
 

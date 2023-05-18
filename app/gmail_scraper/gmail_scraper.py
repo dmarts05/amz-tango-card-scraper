@@ -2,17 +2,15 @@
 
 import email as em
 import imaplib
-from typing import List
+from typing import TYPE_CHECKING, List
 
-from schemas import TangoCard
+if TYPE_CHECKING:
+    from app.utils.schemas import TangoCard
 
-IMAP_GMAIL_URL = "imap.gmail.com"
-EMAIL_FORMAT = "(RFC822)"
+from .constants import EMAIL_FORMAT, IMAP_GMAIL_URL
 
 
-def scrape_tango_cards(
-    email: str, app_password: str, from_list: List[str], trash: bool = False
-) -> List[TangoCard]:
+def scrape_tango_cards(email: str, app_password: str, from_list: List[str], trash: bool = False) -> List["TangoCard"]:
     """
     Scrapes Tango Cards from Gmail using the specified email addresses.
 
@@ -26,6 +24,7 @@ def scrape_tango_cards(
     Returns:
         A list of Tango Cards
     """
+    from app.utils.schemas import TangoCard
 
     # Connection with Gmail using SSL
     with imaplib.IMAP4_SSL(IMAP_GMAIL_URL) as mail:
@@ -77,44 +76,38 @@ def scrape_tango_cards(
                                 text[-1].get_payload().replace("=\r\n", "")  # type: ignore # noqa: E501
                             )
 
-                            security_code = text.split(  # type: ignore
-                                'tango-credential-value">'
-                            )[4].split("<", 1)[0]
+                            security_code = text.split('tango-credential-value">')[4].split("<", 1)[0]  # type: ignore
 
-                            tango_link = text.split(  # type: ignore
-                                'tango-credential-key"><a href=3D"', 1
-                            )[1].split('"', 1)[0]
+                            tango_link = text.split('tango-credential-key"><a href=3D"', 1)[1].split(  # type: ignore
+                                '"', 1
+                            )[0]
 
                         else:
                             security_code = text.split(
                                 "</div><div class='tango-credential-value'>",
                                 1,
-                            )[1].split("<", 1)[0]
+                            )[1].split(
+                                "<", 1
+                            )[0]
 
                             tango_link = text.split(
-                                (
-                                    "</div><div"
-                                    " class='tango-credential-key'><a"
-                                    " href='"
-                                ),
+                                ("</div><div" " class='tango-credential-key'><a" " href='"),
                                 1,
-                            )[1].split("'", 1)[0]
+                            )[
+                                1
+                            ].split("'", 1)[0]
 
                         amazon_link = (  # type: ignore
                             "https://www.amazon."
                             + text.split("http://www.amazon.", 1)[1].split(  # type: ignore # noqa: E501
                                 "/",
                                 1,
-                            )[
-                                0
-                            ]
+                            )[0]
                         )
 
                         # Add Tango Card to the list
                         tango_cards.append(
-                            TangoCard(
-                                security_code, tango_link, amazon_link  # type: ignore # noqa: E501
-                            )
+                            TangoCard(security_code, tango_link, amazon_link)  # type: ignore # noqa: E501
                         )
 
                         if trash:

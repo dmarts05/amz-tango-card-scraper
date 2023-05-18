@@ -74,7 +74,4 @@ class AmazonCard(NamedTuple):
         Returns:
             A string representation of the amazon gift card
         """
-        return (
-            f"[Amazon Gift Card]\nRedeem code: {self.redeem_code}\nAmazon"
-            f" link: {self.amazon_link}"
-        )
+        return f"[Amazon Gift Card]\nRedeem code: {self.redeem_code}\nAmazon" f" link: {self.amazon_link}"

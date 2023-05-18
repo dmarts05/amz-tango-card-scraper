@@ -13,9 +13,7 @@ def main() -> None:
     print("[INFO] Reading configuration file...")
     # Get path of config file in the parent directory
     print(__file__)
-    config_file_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "config.yml")
-    )
+    config_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config.yaml"))
     config = get_config(file_path=config_file_path)
     print("[INFO] Configuration file read successfully")
 
@@ -38,9 +36,7 @@ def main() -> None:
 
     # Scrape Amazon gift card codes from Tango Cards
     print("[INFO] Scraping Amazon gift card codes from Tango Cards...")
-    amazon_cards = scrap_amazon_gift_cards(
-        browser=browser, tango_cards=tango_cards
-    )
+    amazon_cards = scrap_amazon_gift_cards(browser=browser, tango_cards=tango_cards)
     print("[INFO] Amazon gift card codes scraped successfully")
 
     # Print Amazon gift card codes

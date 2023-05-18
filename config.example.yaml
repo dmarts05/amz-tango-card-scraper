@@ -16,7 +16,7 @@ amazon:
 
 # Email from field
 # Note: This is used to filter out emails that can contain Amazon Tango Card codes
-from: 
+from:
   - microsoftrewards@email.microsoftrewards.com
   - example@gmail.com
   - example2@yahoo.com

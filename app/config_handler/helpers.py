@@ -3,10 +3,9 @@
 from typing import Dict, List
 
 import yaml
-from schemas import ConfigFile
 
 
-def parse_config(file_path: str) -> ConfigFile:
+def parse_config(file_path: str):
     """
     Parse the config file and return a ConfigFile object that contains the
     parsed config file.
@@ -22,6 +21,8 @@ def parse_config(file_path: str) -> ConfigFile:
     Returns:
         A ConfigFile that contains the parsed config file.
     """
+    from app.utils.schemas import ConfigFile
+
     with open(file_path, "r") as f:
         yaml_config = yaml.safe_load(f)
 
@@ -37,9 +38,7 @@ def parse_config(file_path: str) -> ConfigFile:
         # Verify and extract Script section
         script = verify_script_section(yaml_config.get("script", {}))
 
-    return ConfigFile(
-        gmail=gmail, amazon=amazon, from_list=from_list, script=script
-    )
+    return ConfigFile(gmail=gmail, amazon=amazon, from_list=from_list, script=script)
 
 
 def verify_gmail_section(gmail: Dict[str, str]) -> Dict[str, str]:
@@ -57,9 +56,7 @@ def verify_gmail_section(gmail: Dict[str, str]) -> Dict[str, str]:
     """
     required_fields = ("email", "app_password")
     if not all(field in gmail for field in required_fields):
-        raise ValueError(
-            "Missing required field(s) in Gmail section of config file."
-        )
+        raise ValueError("Missing required field(s) in Gmail section of config file.")
     return gmail
 
 
@@ -79,9 +76,7 @@ def verify_amazon_section(amazon: Dict[str, str]) -> Dict[str, str]:
 
     required_fields = ("email", "password", "otp")
     if not all(field in amazon for field in required_fields):
-        raise ValueError(
-            "Missing required field(s) in Amazon section of config file."
-        )
+        raise ValueError("Missing required field(s) in Amazon section of config file.")
     return amazon
 
 
@@ -101,10 +96,7 @@ def verify_from_section(from_list: List[str]) -> List[str]:
 
     # Check if the list is empty
     if not from_list:
-        raise ValueError(
-            "Empty from section in config file. Please add at least one"
-            " email address."
-        )
+        raise ValueError("Empty from section in config file. Please add at least one" " email address.")
     return from_list
 
 
@@ -129,7 +121,5 @@ def verify_script_section(script: Dict[str, bool]) -> Dict[str, bool]:
         "no_webdriver_manager",
     )
     if not all(field in script for field in required_fields):
-        raise ValueError(
-            "Missing required field(s) in Script section of config file."
-        )
+        raise ValueError("Missing required field(s) in Script section of config file.")
     return script
