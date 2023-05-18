@@ -1,4 +1,4 @@
-"""Extra actions for the browser."""
+"""Module for providing extra actions for Selenium browsers."""
 
 from typing import Tuple
 
