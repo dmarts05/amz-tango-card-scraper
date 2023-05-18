@@ -22,12 +22,17 @@ class ConfigFile(NamedTuple):
         - trash: whether to trash the emails after scraping
         - redeem_amz: whether to redeem the amazon gift cards
         - no_webdriver_manager: whether to disable the webdriver manager
+    telegram: the Telegram section of the config file
+        - enable: whether to enable Telegram notifications
+        - token: the token of the Telegram bot
+        - chat_id: the chat ID that will receive the messages
     """
 
     gmail: Dict[str, str]
     amazon: Dict[str, str]
     from_list: List[str]
     script: Dict[str, bool]
+    telegram: Dict[str, str]
 
 
 class TangoCard(NamedTuple):

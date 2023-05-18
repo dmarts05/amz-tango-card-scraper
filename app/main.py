@@ -8,6 +8,7 @@ from app.gmail_scraper import scrape_tango_cards
 from app.message import (
     build_amazon_cards_message,
     build_tango_cards_message,
+    send_message_to_telegram,
     store_message,
 )
 from app.tango_scraper import scrap_amazon_gift_cards
@@ -43,6 +44,9 @@ def main() -> None:
     amazon_cards = scrap_amazon_gift_cards(browser=browser, tango_cards=tango_cards)
     print("[INFO] Amazon gift card codes scraped successfully")
 
+    # Close Selenium browser
+    browser.quit()
+
     # Build message that is going to be stored and/or sent
     message = (
         build_tango_cards_message(tango_cards=tango_cards)
@@ -56,11 +60,12 @@ def main() -> None:
     print("[INFO] Storing scraping results in a file...")
     store_message(message=message, file_path=message_file_path)
     print("[INFO] Scraping results stored successfully")
-    # Send message
-    # TODO: Implement send_message function
-
-    # Close Selenium browser
-    browser.quit()
+    # Send message if Telegram report sending is enabled
+    if config.telegram.get("enable", False):
+        print("[INFO] Sending scraping results to Telegram...")
+        send_message_to_telegram(
+            message=message, token=config.telegram.get("token", ""), chat_id=config.telegram.get("chat_id", "")
+        )
 
 
 if __name__ == "__main__":
