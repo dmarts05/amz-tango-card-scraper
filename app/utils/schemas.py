@@ -61,10 +61,12 @@ class AmazonCard(NamedTuple):
     A schema that represents an amazon gift card.
 
     redeem_code: the code of the amazon gift card
+    redeem_status: the status of the amazon gift card (True if redeemed, False otherwise)
     amazon_link: the link that will be used to redeem the amazon gift card
     """
 
     redeem_code: str
+    redeem_status: bool
     amazon_link: str
 
     def __str__(self) -> str:
@@ -74,4 +76,7 @@ class AmazonCard(NamedTuple):
         Returns:
             A string representation of the amazon gift card
         """
-        return f"[Amazon Gift Card]\nRedeem code: {self.redeem_code}\nAmazon" f" link: {self.amazon_link}"
+        return (
+            f"[Amazon Gift Card]\nRedeem code: {self.redeem_code}\nRedeem status: {self.redeem_status}\nAmazon"
+            f" link: {self.amazon_link}"
+        )

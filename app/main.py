@@ -5,6 +5,11 @@ import os
 from app.browser import get_chrome_browser
 from app.config_handler import get_config
 from app.gmail_scraper import scrape_tango_cards
+from app.message import (
+    build_amazon_cards_message,
+    build_tango_cards_message,
+    store_message,
+)
 from app.tango_scraper import scrap_amazon_gift_cards
 
 
@@ -38,9 +43,21 @@ def main() -> None:
     amazon_cards = scrap_amazon_gift_cards(browser=browser, tango_cards=tango_cards)
     print("[INFO] Amazon gift card codes scraped successfully")
 
-    # Print Amazon gift card codes
-    amazon_cards_str = "\n".join([str(card) for card in amazon_cards])
-    print(amazon_cards_str)
+    # Build message that is going to be stored and/or sent
+    message = (
+        build_tango_cards_message(tango_cards=tango_cards)
+        + "\n\n"
+        + build_amazon_cards_message(amazon_cards=amazon_cards)
+    )
+
+    # Get path of the file that is going to store the message
+    message_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results.txt"))
+    # Store message in a file
+    print("[INFO] Storing scraping results in a file...")
+    store_message(message=message, file_path=message_file_path)
+    print("[INFO] Scraping results stored successfully")
+    # Send message
+    # TODO: Implement send_message function
 
     # Close Selenium browser
     browser.quit()
