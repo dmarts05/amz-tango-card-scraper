@@ -12,7 +12,10 @@ def main() -> None:
     # Get program configuration
     print("[INFO] Reading configuration file...")
     # Get path of config file in the parent directory
-    config_file_path = os.path.join(__file__, "..", "config.yml")
+    print(__file__)
+    config_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "config.yml")
+    )
     config = get_config(file_path=config_file_path)
     print("[INFO] Configuration file read successfully")
 

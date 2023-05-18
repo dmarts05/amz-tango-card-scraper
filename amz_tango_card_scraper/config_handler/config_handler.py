@@ -1,6 +1,6 @@
 """Module for handling the configuration file."""
 
-from config_handler_helpers import parse_config
+from .config_handler_helpers import parse_config
 from schemas import ConfigFile
 
 

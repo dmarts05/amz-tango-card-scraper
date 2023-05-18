@@ -5,6 +5,8 @@ import platform
 import requests
 from selenium.webdriver.chrome.options import Options
 
+from .browser_constants import USER_AGENT
+
 
 def get_browser_language() -> str:
     try:
