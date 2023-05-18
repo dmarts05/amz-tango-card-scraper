@@ -38,7 +38,10 @@ def parse_config(file_path: str):
         # Verify and extract Script section
         script = verify_script_section(yaml_config.get("script", {}))
 
-    return ConfigFile(gmail=gmail, amazon=amazon, from_list=from_list, script=script)
+        # Verify and extract Telegram section
+        telegram = verify_telegram_section(yaml_config.get("telegram", {}))
+
+    return ConfigFile(gmail=gmail, amazon=amazon, from_list=from_list, script=script, telegram=telegram)
 
 
 def verify_gmail_section(gmail: Dict[str, str]) -> Dict[str, str]:
@@ -123,3 +126,23 @@ def verify_script_section(script: Dict[str, bool]) -> Dict[str, bool]:
     if not all(field in script for field in required_fields):
         raise ValueError("Missing required field(s) in Script section of config file.")
     return script
+
+
+def verify_telegram_section(telegram: Dict[str, str]) -> Dict[str, str]:
+    """
+    Verify the Telegram section of the config file.
+
+    Args:
+        telegram: The Telegram section of the config file.
+
+    Raises:
+        ValueError: If the Telegram section is invalid.
+
+    Returns:
+        The verified Telegram section of the config file.
+    """
+
+    required_fields = ("enable", "token", "chat_id")
+    if not all(field in telegram for field in required_fields):
+        raise ValueError("Missing required field(s) in Telegram section of config file.")
+    return telegram

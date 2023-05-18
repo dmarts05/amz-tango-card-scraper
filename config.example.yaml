@@ -28,3 +28,11 @@ script:
   trash: False # Set to True to move checked emails to trash
   redeem_amz: True # Set to True to redeem Amazon codes automatically
   no_webdriver_manager: False # Set to True to disable webdriver_manager
+
+# Telegram bot for sending reports
+# Note 1: You must create a Telegram bot and get the bot token: https://core.telegram.org/bots#6-botfather
+# Note 2: You must get the channel ID for the channel associated with the bot: https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id
+telegram:
+  enable: False # Set to True to enable Telegram bot reporting
+  token: 1234567890:ABHztzSYqu2IMZrDnpCBLptJPviwBOFM1bs # Telegram bot token
+  chat_id: 123456789 # Telegram chat ID
