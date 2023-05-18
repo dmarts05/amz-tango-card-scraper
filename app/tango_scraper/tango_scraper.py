@@ -73,6 +73,6 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) 
         )  # type: ignore
 
         # Add Amazon gift card to list
-        amazon_cards.append(AmazonCard(redeem_code=redeem_code, amazon_link=tc.amazon_link))
+        amazon_cards.append(AmazonCard(redeem_code=redeem_code, redeem_status=False, amazon_link=tc.amazon_link))
 
     return amazon_cards
