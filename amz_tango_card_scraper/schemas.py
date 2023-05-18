@@ -8,9 +8,20 @@ class ConfigFile(NamedTuple):
     A schema that encapsulates the structure of the config file.
 
     gmail: the Gmail section of the config file
+        - email: the email address of the Gmail account
+        - app_password: the app password of the Gmail account
     amazon: the Amazon section of the config file
-    from_list: the From section of the config file
+        - email: the email address of the Amazon account
+        - password: the password of the Amazon account
+        - otp: the OTP of the Amazon account
+    from_list: the From section of the config file with a list of email
+        addresses for filtering
     script: the Script section of the config file
+        - no_images: whether to disable images in the browser
+        - headless: whether to run the browser in headless mode
+        - trash: whether to trash the emails after scraping
+        - redeem_amz: whether to redeem the amazon gift cards
+        - no_webdriver_manager: whether to disable the webdriver manager
     """
 
     gmail: Dict[str, str]
