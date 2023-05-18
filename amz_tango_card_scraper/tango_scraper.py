@@ -31,8 +31,8 @@ def scrap_amazon_gift_cards(
             "[TANGO SCRAPER] Sending security code to security code field..."
         )
         security_code_field = wait_for_element(
-            browser=browser,
-            locator=(By.ID, "input-47"),
+            browser,
+            (By.ID, "input-47"),
         )
         security_code_field.send_keys(tc.security_code)  # type: ignore
 
@@ -48,8 +48,8 @@ def scrap_amazon_gift_cards(
             "[TANGO SCRAPER] Checking whether the security code was valid..."
         )
         heads_up = wait_for_element(
-            browser=browser,
-            locator=(By.CSS_SELECTOR, ".v-snack__wrapper"),
+            browser,
+            (By.CSS_SELECTOR, ".v-snack__wrapper"),
         )
         # Check whether the heads up message is a success or an error
         if "error" in heads_up.get_attribute("class"):  # type: ignore
@@ -63,8 +63,8 @@ def scrap_amazon_gift_cards(
         # Wait for Amazon gift card code to be visible and get it
         redeem_code = (
             wait_for_element(  # type: ignore
-                browser=browser,
-                locator=(
+                browser,
+                (
                     By.CSS_SELECTOR,
                     'div[data-test-id="rewardCredentialValue-cardNumber"]',
                 ),
