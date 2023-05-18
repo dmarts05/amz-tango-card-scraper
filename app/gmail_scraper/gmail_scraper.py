@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from app.utils.schemas import TangoCard
 
-from .constants import EMAIL_FORMAT, IMAP_GMAIL_URL
+from . import constants
 
 
 def scrape_tango_cards(email: str, app_password: str, from_list: List[str], trash: bool = False) -> List["TangoCard"]:
@@ -27,7 +27,7 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
     from app.utils.schemas import TangoCard
 
     # Connection with Gmail using SSL
-    with imaplib.IMAP4_SSL(IMAP_GMAIL_URL) as mail:
+    with imaplib.IMAP4_SSL(constants.IMAP_GMAIL_URL) as mail:
         # Login to Gmail
         mail.login(email, app_password)
 
@@ -46,7 +46,7 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
                 continue
 
             # Capture all messages from the obtained email ids
-            msgs = [mail.fetch(id, EMAIL_FORMAT)[1] for id in email_ids]
+            msgs = [mail.fetch(id, constants.EMAIL_FORMAT)[1] for id in email_ids]
 
             # Get tango security code and links from the messages
             for id, msg in zip(email_ids, msgs):

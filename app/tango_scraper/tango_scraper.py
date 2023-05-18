@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from . import constants
+
 
 def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) -> List["AmazonCard"]:
     """
@@ -33,25 +35,23 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) 
         print("[TANGO SCRAPER] Sending security code to security code field...")
         security_code_field = wait_for_element(
             browser,
-            (By.ID, "input-47"),
+            (By.ID, constants.SECURITY_CODE_ID),
         )
         security_code_field.send_keys(tc.security_code)  # type: ignore
 
         # Click redeem button
         print("[TANGO SCRAPER] Clicking redeem button...")
-        redeem_button = browser.find_element(  # type: ignore
-            By.CSS_SELECTOR, 'button[data-test-id="activateRewardButton"]'
-        )
+        redeem_button = browser.find_element(By.CSS_SELECTOR, constants.REDEEM_BUTTON_CSS_SELECTOR)  # type: ignore
         redeem_button.click()
 
         # Check whether the security code was valid or not
         print("[TANGO SCRAPER] Checking whether the security code was valid...")
         heads_up = wait_for_element(
             browser,
-            (By.CSS_SELECTOR, ".v-snack__wrapper"),
+            (By.CSS_SELECTOR, constants.HEADS_UP_CSS_SELECTOR),
         )
         # Check whether the heads up message is a success or an error
-        if "error" in heads_up.get_attribute("class"):  # type: ignore
+        if constants.HEADS_UP_ERROR_CLASS in heads_up.get_attribute("class"):  # type: ignore
             # Invalid security code
             print("[ERROR] Failed to redeem Tango Card")
             continue
@@ -65,7 +65,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) 
                 browser,
                 (
                     By.CSS_SELECTOR,
-                    'div[data-test-id="rewardCredentialValue-cardNumber"]',
+                    constants.AMZ_GIFT_CARD_CODE_WRAPPER_CSS_SELECTOR,
                 ),
             )
             .find_element(By.XPATH, "./span")
