@@ -559,6 +559,18 @@ files = [
 ]
 
 [[package]]
+name = "pyotp"
+version = "2.8.0"
+description = "Python One Time Password Library"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pyotp-2.8.0-py3-none-any.whl", hash = "sha256:889d037fdde6accad28531fc62a790f089e5dfd5b638773e9ee004cce074a2e5"},
+    {file = "pyotp-2.8.0.tar.gz", hash = "sha256:c2f5e17d9da92d8ec1f7de6331ab08116b9115adbabcba6e208d46fc49a98c5a"},
+]
+
+[[package]]
 name = "pysocks"
 version = "1.7.1"
 description = "A Python SOCKS client module. See https://github.com/Anorov/PySocks for more information."
@@ -854,4 +866,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0c15e8475b1459504a1211e1ab52096a02317cea15bdd5582158b7ec695012bb"
+content-hash = "d9e2bac299718df2575b3acc99ebaf5467774e01d6720ebd52b04693a9650a55"

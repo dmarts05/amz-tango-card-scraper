@@ -12,6 +12,7 @@ requests = "^2.30.0"
 selenium = "^4.9.1"
 webdriver-manager = "^3.8.6"
 pyyaml = "^6.0"
+pyotp = "^2.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
