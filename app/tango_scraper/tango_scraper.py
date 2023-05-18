@@ -1,14 +1,13 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 
-from browser import wait_for_element
-from schemas import AmazonCard, TangoCard
+if TYPE_CHECKING:
+    from app.utils.schemas import TangoCard, AmazonCard
+
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
 
-def scrap_amazon_gift_cards(
-    browser: WebDriver, tango_cards: List[TangoCard]
-) -> List[AmazonCard]:
+def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) -> List["AmazonCard"]:
     """
     Scrapes the amazon gift cards from the tango cards.
 
@@ -20,16 +19,18 @@ def scrap_amazon_gift_cards(
         The amazon gift cards that were scraped
     """
 
+    from app.browser import wait_for_element
+    from app.utils.schemas import AmazonCard
+
     amazon_cards: List[AmazonCard] = []
     for tc in tango_cards:
         # Go to the Tango card URL
         print(f"[TANGO SCRAPER] Going to {tc.tango_link}")
+
         browser.get(tc.tango_link)
 
         # Send security code to security code field (wait until it is visible)
-        print(
-            "[TANGO SCRAPER] Sending security code to security code field..."
-        )
+        print("[TANGO SCRAPER] Sending security code to security code field...")
         security_code_field = wait_for_element(
             browser,
             (By.ID, "input-47"),
@@ -44,9 +45,7 @@ def scrap_amazon_gift_cards(
         redeem_button.click()
 
         # Check whether the security code was valid or not
-        print(
-            "[TANGO SCRAPER] Checking whether the security code was valid..."
-        )
+        print("[TANGO SCRAPER] Checking whether the security code was valid...")
         heads_up = wait_for_element(
             browser,
             (By.CSS_SELECTOR, ".v-snack__wrapper"),
@@ -74,8 +73,6 @@ def scrap_amazon_gift_cards(
         )  # type: ignore
 
         # Add Amazon gift card to list
-        amazon_cards.append(
-            AmazonCard(redeem_code=redeem_code, amazon_link=tc.amazon_link)
-        )
+        amazon_cards.append(AmazonCard(redeem_code=redeem_code, amazon_link=tc.amazon_link))
 
     return amazon_cards

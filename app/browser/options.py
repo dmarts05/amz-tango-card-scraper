@@ -5,7 +5,7 @@ import platform
 import requests
 from selenium.webdriver.chrome.options import Options
 
-from .browser_constants import USER_AGENT
+from .constants import USER_AGENT
 
 
 def get_browser_language() -> str:
@@ -27,9 +27,7 @@ def get_browser_language() -> str:
     return lang
 
 
-def get_chrome_browser_options(
-    headless: bool = True, no_images: bool = True
-) -> Options:
+def get_chrome_browser_options(headless: bool = True, no_images: bool = True) -> Options:
     options = Options()
 
     # Add user agent and language to the browser options
@@ -53,9 +51,7 @@ def get_chrome_browser_options(
         prefs["profile.managed_default_content_settings.images"] = 2
     options.add_experimental_option("prefs", prefs)  # type: ignore
     options.add_experimental_option("useAutomationExtension", False)  # type: ignore # noqa
-    options.add_experimental_option(  # type: ignore
-        "excludeSwitches", ["enable-automation"]
-    )
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])  # type: ignore
     # Add headless option if specified
     if headless:
         options.add_argument("--headless")  # type: ignore

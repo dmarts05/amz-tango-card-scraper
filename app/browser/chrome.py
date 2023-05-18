@@ -1,10 +1,11 @@
 """Module for creating Selenium Chrome browser instances."""
 
-from .browser_options import get_chrome_browser_options
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
+
+from .options import get_chrome_browser_options
 
 
 def get_chrome_browser(
@@ -25,9 +26,7 @@ def get_chrome_browser(
     """
     options = get_chrome_browser_options(headless, no_images)
     browser = (
-        Chrome(
-            service=Service(ChromeDriverManager().install()), options=options
-        )
+        Chrome(service=Service(ChromeDriverManager().install()), options=options)
         if not no_webdriver_manager
         else Chrome(options=options)
     )
