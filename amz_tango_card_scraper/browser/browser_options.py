@@ -1,4 +1,4 @@
-"""Helper functions for the browser module."""
+"""Module for getting browser options for Selenium."""
 
 import platform
 
