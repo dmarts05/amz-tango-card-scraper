@@ -11,7 +11,7 @@ EMAIL_FORMAT = "(RFC822)"
 
 
 def scrape_tango_cards(
-    email: str, app_password: str, from_emails: List[str], trash: bool = False
+    email: str, app_password: str, from_list: List[str], trash: bool = False
 ) -> List[TangoCard]:
     """
     Scrapes Tango Cards from Gmail using the specified email addresses.
@@ -19,7 +19,7 @@ def scrape_tango_cards(
     Args:
         email: the email address to use to connect to Gmail
         app_password: the app password to use to connect to Gmail
-        from_emails: a list of email addresses from which to check for
+        from_list: a list of email addresses from which to check for
                      Tango Card emails
         trash: whether to trash the Tango Card emails after scraping them
 
@@ -37,7 +37,7 @@ def scrape_tango_cards(
 
         # Search for Tango Card emails
         tango_cards: List[TangoCard] = []
-        for from_email in from_emails:
+        for from_email in from_list:
             # Search for Tango Card emails from the specified email address
             _, data = mail.search(None, "FROM", from_email)
             email_ids = data[0].split()
