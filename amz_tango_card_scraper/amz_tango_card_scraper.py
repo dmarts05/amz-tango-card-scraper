@@ -1,7 +1,7 @@
 """Module containing the main function of the program."""
 
 import os
-from browser.chrome import get_chrome_browser
+from browser import get_chrome_browser
 
 from gmail_scraper import scrape_tango_cards
 from config_reader import ConfigReader
