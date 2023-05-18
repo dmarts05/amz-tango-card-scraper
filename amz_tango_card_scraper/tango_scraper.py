@@ -1,6 +1,6 @@
 from typing import List
 
-from browser import wait_for_element
+from browser.actions import wait_for_element
 from schemas import AmazonCard, TangoCard
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By

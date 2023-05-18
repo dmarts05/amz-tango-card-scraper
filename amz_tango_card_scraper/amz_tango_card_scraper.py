@@ -1,7 +1,7 @@
 """Module containing the main function of the program."""
 
 import os
-from amz_tango_card_scraper.browser import get_browser
+from browser.chrome import get_chrome_browser
 
 from gmail_scraper import scrape_tango_cards
 from config_reader import ConfigReader
@@ -74,7 +74,7 @@ def main() -> None:
     print("[INFO] Tango Cards scraped successfully")
 
     # Get Selenium browser
-    browser = get_browser(
+    browser = get_chrome_browser(
         config.script.get("headless", True),
         config.script.get("no_images", True),
         config.script.get("no_webdriver_manager", False),

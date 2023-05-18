@@ -1,22 +1,9 @@
-"""Module for creating Selenium Chrome browser instances."""
+"""Helper functions for the browser module."""
 
 import platform
-from typing import Tuple
 
 import requests
-from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
-
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like"
-    " Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.58"
-)
 
 
 def get_browser_language() -> str:
@@ -38,7 +25,7 @@ def get_browser_language() -> str:
     return lang
 
 
-def get_browser_options(
+def get_chrome_browser_options(
     headless: bool = True, no_images: bool = True
 ) -> Options:
     options = Options()
@@ -77,38 +64,3 @@ def get_browser_options(
         options.add_argument("--disable-dev-shm-usage")  # type: ignore
 
     return options
-
-
-def get_browser(
-    headless: bool = True,
-    no_images: bool = True,
-    no_webdriver_manager: bool = False,
-) -> WebDriver:
-    """
-    Returns a configured Chrome browser instance.
-
-    Args:
-        headless: whether to run the browser in headless mode
-        no_images: whether to disable images
-        no_webdriver_manager: whether to disable the webdriver manager
-
-    Returns:
-        A Chrome browser instance
-    """
-    options = get_browser_options(headless, no_images)
-    browser = (
-        Chrome(
-            service=Service(ChromeDriverManager().install()), options=options
-        )
-        if not no_webdriver_manager
-        else Chrome(options=options)
-    )
-    return browser
-
-
-def wait_for_element(
-    browser: WebDriver, locator: Tuple[str, str], timeout: int = 15
-) -> WebElement:
-    wait = WebDriverWait(browser, timeout)
-    element = wait.until(EC.visibility_of_element_located(locator))  # type: ignore # noqa
-    return element  # type: ignore
