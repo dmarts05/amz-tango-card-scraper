@@ -1,3 +1,4 @@
+"""Module for sending messages."""
 import requests
 
 
