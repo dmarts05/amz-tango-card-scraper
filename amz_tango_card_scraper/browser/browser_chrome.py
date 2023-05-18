@@ -1,6 +1,6 @@
 """Module for creating Selenium Chrome browser instances."""
 
-from browser_options import get_chrome_browser_options
+from .browser_options import get_chrome_browser_options
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.webdriver import WebDriver
