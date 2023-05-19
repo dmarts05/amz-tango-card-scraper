@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-def wait_for_element(browser: WebDriver, locator: Tuple[str, str], timeout: int = 15) -> WebElement:
+def wait_for_element(browser: WebDriver, locator: Tuple[str, str], timeout: int = 10) -> WebElement:
     """
     Waits for an element to be visible and returns it.
 
