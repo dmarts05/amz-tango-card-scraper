@@ -12,4 +12,4 @@ def get_otp_code(otp_key: str) -> str:
     Returns:
         Generated OTP code.
     """
-    return TOTP(otp_key).now()
+    return TOTP(otp_key.strip().replace(" ", "")).now()

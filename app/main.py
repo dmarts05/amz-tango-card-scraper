@@ -2,16 +2,17 @@
 
 import os
 
-from app.browser import get_chrome_browser
-from app.config_handler import get_config
-from app.gmail_scraper import scrape_tango_cards
-from app.message import (
+from app.amazon_redeemer.amazon_redeemer import redeem_amazon_gift_cards
+from app.browser.chrome import get_chrome_browser
+from app.config_handler.config_handler import get_config
+from app.gmail_scraper.gmail_scraper import scrape_tango_cards
+from app.message.message_builder import (
     build_amazon_cards_message,
     build_tango_cards_message,
-    send_message_to_telegram,
-    store_message,
 )
-from app.tango_scraper import scrap_amazon_gift_cards
+from app.message.message_sender import send_message_to_telegram
+from app.message.message_storage import store_message
+from app.tango_scraper.tango_scraper import scrap_amazon_gift_cards
 
 
 def main() -> None:
@@ -43,6 +44,17 @@ def main() -> None:
     print("[INFO] Scraping Amazon gift card codes from Tango Cards...")
     amazon_cards = scrap_amazon_gift_cards(browser=browser, tango_cards=tango_cards)
     print("[INFO] Amazon gift card codes scraped successfully")
+
+    # Attempt to redeem Amazon gift card codes if enabled
+    if config.script.get("redeem_amz", False):
+        print("[INFO] Attempting to redeem Amazon gift card codes...")
+        redeem_amazon_gift_cards(
+            browser=browser,
+            amazon_cards=amazon_cards,
+            email=config.amazon.get("email", ""),
+            password=config.amazon.get("password", ""),
+            otp=config.amazon.get("otp", ""),
+        )
 
     # Close Selenium browser
     browser.quit()

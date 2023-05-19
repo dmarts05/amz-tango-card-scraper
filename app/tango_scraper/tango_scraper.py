@@ -21,7 +21,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List["TangoCard"]) 
         The amazon gift cards that were scraped
     """
 
-    from app.browser import wait_for_element
+    from app.browser.extra_actions import wait_for_element
     from app.utils.schemas import AmazonCard
 
     amazon_cards: List[AmazonCard] = []
