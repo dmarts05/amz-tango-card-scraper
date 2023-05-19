@@ -61,18 +61,20 @@ class TangoCard(NamedTuple):
         )
 
 
-class AmazonCard(NamedTuple):
+class AmazonCard:
     """
-    A schema that represents an amazon gift card.
+    A schema that represents a mutable amazon gift card.
 
     redeem_code: the code of the amazon gift card
     redeem_status: the status of the amazon gift card (True if redeemed, False otherwise)
     amazon_link: the link that will be used to redeem the amazon gift card
     """
 
-    redeem_code: str
-    redeem_status: bool
-    amazon_link: str
+    def __init__(self, redeem_code: str, redeem_status: bool, amazon_link: str) -> None:
+        """Initialize the amazon gift card."""
+        self.redeem_code = redeem_code
+        self.redeem_status = redeem_status
+        self.amazon_link = amazon_link
 
     def __str__(self) -> str:
         """
