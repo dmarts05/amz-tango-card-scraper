@@ -5,10 +5,14 @@ import platform
 import requests
 from selenium.webdriver.chrome.options import Options
 
-from . import constants
-
 
 def get_browser_language() -> str:
+    """
+    Get the user's browser language.
+
+    Returns:
+        The user's browser language
+    """
     try:
         # Get the user's IP address
         response = requests.get("https://api.ipify.org?format=json")
@@ -28,10 +32,22 @@ def get_browser_language() -> str:
 
 
 def get_chrome_browser_options(headless: bool = True, no_images: bool = True) -> Options:
+    """
+    Returns a configured Chrome browser options instance.
+
+    Args:
+        headless: whether to run the browser in headless mode
+        no_images: whether to disable images
+
+    Returns:
+        A Chrome browser options instance
+    """
+    from .constants import USER_AGENT
+
     options = Options()
 
     # Add user agent and language to the browser options
-    options.add_argument("user-agent=" + constants.USER_AGENT)  # type: ignore # noqa
+    options.add_argument("user-agent=" + USER_AGENT)  # type: ignore # noqa
     options.add_argument("lang=" + get_browser_language().split("-")[0])  # type: ignore # noqa
 
     # Add misc options
