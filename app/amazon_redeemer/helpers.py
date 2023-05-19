@@ -12,6 +12,8 @@ from app.browser.extra_actions import wait_for_element
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
+    from app.utils.schemas import AmazonCard
+
 
 def get_amazon_sign_in_link(amazon_link: str) -> str:
     """
@@ -105,7 +107,43 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     # Check if we have managed to successfully sign in
     # To do so, we need to check wether the nav-logo is present or not
     try:
-        wait_for_element(browser, (By.ID, NAV_LOGO_ID))
+        wait_for_element(browser, (By.ID, NAV_LOGO_ID), timeout=5)
     except TimeoutException:
         # Malformed OTP code in previous step
         raise ValueError("Malformed OTP code")
+
+
+def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> AmazonCard:
+    """
+    Redeem the given amazon gift card
+
+    Args:
+        browser: The browser to use
+        amazon_card: The amazon card to redeem
+
+    Returns:
+        The amazon card with the updated redeem status
+    """
+    # Get to gift card redeem page
+    browser.get(amazon_card.amazon_link + "/gc/redeem")
+
+    # Write gift card code
+    print(f"[AMAZON REDEEMER] Writing gift card code {amazon_card.redeem_code}...")
+    gift_card_code_field = wait_for_element(browser, (By.ID, "gc-redemption-input"))
+    gift_card_code_field.send_keys(amazon_card.redeem_code)  # type: ignore
+
+    # Click redeem button
+    print("[AMAZON REDEEMER] Redeeming code...")
+    redeem_btn = browser.find_element(By.ID, "gc-redemption-apply-button")
+    redeem_btn.click()
+
+    # TODO: Fix this part
+    # Check if code has been correctly redeemed
+    error_section = wait_for_element(browser, (By.ID, "gc-redemption-error-section"))
+    # If the error section is displayed, the code couldn't be redeemed
+    if error_section.is_displayed():
+        print("[AMAZON REDEEMER] Code couldn't be redeemed!")
+        return amazon_card
+
+    print("[AMAZON REDEEMER] Code was successfully redeemed!")
+    return AmazonCard(redeem_code=amazon_card.redeem_code, amazon_link=amazon_card.amazon_link, redeem_status=True)

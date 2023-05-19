@@ -4,17 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from .helpers import sign_in_to_amazon
+from app.utils.schemas import AmazonCard
+
+from .helpers import redeem_amazon_gift_card, sign_in_to_amazon
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
-    from app.utils.schemas import AmazonCard
-
 
 def redeem_amazon_gift_cards(
     browser: WebDriver, amazon_cards: List[AmazonCard], email: str, password: str, otp: str
-) -> None:
+) -> List[AmazonCard]:
     """
     Redeems the amazon gift cards.
 
@@ -27,6 +27,9 @@ def redeem_amazon_gift_cards(
 
     Raises:
         ValueError: If the amazon gift cards are from different geographical regions or if the sign in process failed
+
+    Returns:
+        The updated amazon gift cards with the new redeem status
     """
     # Check that every amazon link comes from the same geographical region
     if len(set([ac.amazon_link for ac in amazon_cards])) > 1:
@@ -34,3 +37,11 @@ def redeem_amazon_gift_cards(
 
     # Sign in to Amazon
     sign_in_to_amazon(browser, email, password, otp, amazon_cards[0].amazon_link)
+
+    # Redeem Amazon gift cards
+    updated_acs: List[AmazonCard] = []
+    for ac in amazon_cards:
+        updated_ac = redeem_amazon_gift_card(browser, ac)
+        updated_acs.append(updated_ac)
+
+    return updated_acs
