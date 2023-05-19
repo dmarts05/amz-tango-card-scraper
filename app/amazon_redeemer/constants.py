@@ -9,3 +9,5 @@ SIGN_IN_BTN_1_ID = "signInSubmit"
 OTP_FIELD_ID = "auth-mfa-otpcode"
 SIGN_IN_BTN_2_ID = "auth-signin-button"
 NAV_LOGO_ID = "nav-logo"
+
+GIFT_CARD_CODE_FIELD_ID = "gc-redemption-input"
