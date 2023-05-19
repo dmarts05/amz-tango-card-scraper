@@ -1,47 +1,6 @@
-"""Module that contains helper functions for the config handler."""
+"""Module that contains helper functions for the config parser."""
 
 from typing import Dict, List
-
-import yaml
-
-
-def parse_config(file_path: str):
-    """
-    Parse the config file and return a ConfigFile object that contains the
-    parsed config file.
-
-    Refer to :class:`ConfigFile` for more information.
-
-    Args:
-        file_path: Path to the config file.
-
-    Raises:
-        ValueError: If the config file is invalid.
-
-    Returns:
-        A ConfigFile that contains the parsed config file.
-    """
-    from app.utils.schemas import ConfigFile
-
-    with open(file_path, "r") as f:
-        yaml_config = yaml.safe_load(f)
-
-        # Verify and extract Gmail section
-        gmail = verify_gmail_section(yaml_config.get("gmail", {}))
-
-        # Verify and extract Amazon section
-        amazon = verify_amazon_section(yaml_config.get("amazon", {}))
-
-        # Verify and extract From section
-        from_list = verify_from_section(yaml_config.get("from", []))
-
-        # Verify and extract Script section
-        script = verify_script_section(yaml_config.get("script", {}))
-
-        # Verify and extract Telegram section
-        telegram = verify_telegram_section(yaml_config.get("telegram", {}))
-
-    return ConfigFile(gmail=gmail, amazon=amazon, from_list=from_list, script=script, telegram=telegram)
 
 
 def verify_gmail_section(gmail: Dict[str, str]) -> Dict[str, str]:

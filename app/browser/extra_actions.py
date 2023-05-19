@@ -1,11 +1,15 @@
 """Module for providing extra actions for Selenium browsers."""
 
-from typing import Tuple
+from __future__ import annotations
 
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from typing import TYPE_CHECKING, Tuple
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
+if TYPE_CHECKING:
+    from selenium.webdriver.remote.webdriver import WebDriver
+    from selenium.webdriver.remote.webelement import WebElement
 
 
 def wait_for_element(browser: WebDriver, locator: Tuple[str, str], timeout: int = 10) -> WebElement:
@@ -18,9 +22,13 @@ def wait_for_element(browser: WebDriver, locator: Tuple[str, str], timeout: int 
                  (e.g. (By.ID, "my-id"))
         timeout: the max amount of time to wait for the element to be visible
 
+    Raises:
+        TimeoutException: If the element is not visible after the timeout
+
     Returns:
         The element that was waited for
     """
+
     wait = WebDriverWait(browser, timeout)
     element = wait.until(EC.visibility_of_element_located(locator))  # type: ignore # noqa
     return element  # type: ignore

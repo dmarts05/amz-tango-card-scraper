@@ -1,11 +1,17 @@
 """Module for creating Selenium Chrome browser instances."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 from .options import get_chrome_browser_options
+
+if TYPE_CHECKING:
+    from selenium.webdriver.chrome.webdriver import WebDriver
 
 
 def get_chrome_browser(

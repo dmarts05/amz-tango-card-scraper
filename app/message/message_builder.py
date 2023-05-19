@@ -1,12 +1,14 @@
 """Module for building messages."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from app.utils.schemas import AmazonCard, TangoCard
 
 
-def build_tango_cards_message(tango_cards: List["TangoCard"]) -> str:
+def build_tango_cards_message(tango_cards: List[TangoCard]) -> str:
     """
     Builds a message that contains the tango cards.
 
@@ -25,7 +27,7 @@ def build_tango_cards_message(tango_cards: List["TangoCard"]) -> str:
     return title + body
 
 
-def build_amazon_cards_message(amazon_cards: List["AmazonCard"]) -> str:
+def build_amazon_cards_message(amazon_cards: List[AmazonCard]) -> str:
     """
     Builds a message that contains the amazon cards.
 

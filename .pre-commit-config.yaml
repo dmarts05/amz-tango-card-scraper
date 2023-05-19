@@ -7,15 +7,21 @@ repos:
         language: system
         always_run: true
         pass_filenames: false
+      - id: isort
+        name: isort
+        entry: poetry run isort app/
+        language: system
+        always_run: true
+        pass_filenames: false
       - id: flake8
         name: flake8
         entry: poetry run flake8 app/
         language: system
         always_run: true
         pass_filenames: false
-      - id: isort
-        name: isort
-        entry: poetry run isort app/
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy app/
         language: system
         always_run: true
         pass_filenames: false
