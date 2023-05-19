@@ -69,7 +69,7 @@ def main() -> None:
     if config.script.get("redeem_amz", False):
         print("[INFO] Attempting to redeem Amazon gift card codes...")
         try:
-            amazon_cards = redeem_amazon_gift_cards(
+            redeem_amazon_gift_cards(
                 browser=browser,
                 amazon_cards=amazon_cards,
                 email=config.amazon.get("email", ""),

@@ -113,37 +113,39 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
         raise ValueError("Malformed OTP code")
 
 
-def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> AmazonCard:
+def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None:
     """
     Redeem the given amazon gift card
 
     Args:
         browser: The browser to use
         amazon_card: The amazon card to redeem
-
-    Returns:
-        The amazon card with the updated redeem status
     """
+    from .constants import (
+        GIFT_CARD_CODE_FIELD_ID,
+        REDEEM_BUTTON_ID,
+        SUCCESSFUL_REDEEM_BOX_ID,
+    )
+
     # Get to gift card redeem page
     browser.get(amazon_card.amazon_link + "/gc/redeem")
 
     # Write gift card code
     print(f"[AMAZON REDEEMER] Writing gift card code {amazon_card.redeem_code}...")
-    gift_card_code_field = wait_for_element(browser, (By.ID, "gc-redemption-input"))
+    gift_card_code_field = wait_for_element(browser, (By.ID, GIFT_CARD_CODE_FIELD_ID))
     gift_card_code_field.send_keys(amazon_card.redeem_code)  # type: ignore
 
     # Click redeem button
     print("[AMAZON REDEEMER] Redeeming code...")
-    redeem_btn = browser.find_element(By.ID, "gc-redemption-apply-button")
+    redeem_btn = browser.find_element(By.ID, REDEEM_BUTTON_ID)
     redeem_btn.click()
 
-    # TODO: Fix this part
     # Check if code has been correctly redeemed
-    error_section = wait_for_element(browser, (By.ID, "gc-redemption-error-section"))
-    # If the error section is displayed, the code couldn't be redeemed
-    if error_section.is_displayed():
+    try:
+        wait_for_element(browser, (By.ID, SUCCESSFUL_REDEEM_BOX_ID), timeout=5)
+    except TimeoutException:
         print("[AMAZON REDEEMER] Code couldn't be redeemed!")
-        return amazon_card
+        return
 
     print("[AMAZON REDEEMER] Code was successfully redeemed!")
-    return AmazonCard(redeem_code=amazon_card.redeem_code, amazon_link=amazon_card.amazon_link, redeem_status=True)
+    amazon_card.redeem_status = True
