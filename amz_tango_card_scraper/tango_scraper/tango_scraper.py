@@ -5,12 +5,15 @@ from typing import TYPE_CHECKING, List
 from selenium.webdriver.common.by import By
 
 from amz_tango_card_scraper.browser.extra_actions import wait_for_element
+from amz_tango_card_scraper.utils.logger import setup_logger
 from amz_tango_card_scraper.utils.schemas import AmazonCard
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
     from amz_tango_card_scraper.utils.schemas import TangoCard
+
+logger = setup_logger(logger_name=__name__)
 
 
 def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) -> List[AmazonCard]:
@@ -35,12 +38,13 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
     amazon_cards: List[AmazonCard] = []
     for tc in tango_cards:
         # Go to the Tango card URL
-        print(f"[TANGO SCRAPER] Going to {tc.tango_link}")
-
+        logger.info("Going to Tango Card URL...")
+        logger.debug(f"Tango Card URL: {tc.tango_link}")
         browser.get(tc.tango_link)
 
         # Send security code to security code field (wait until it is visible)
-        print("[TANGO SCRAPER] Sending security code to security code field...")
+        logger.info("Writing security code to security code field...")
+        logger.debug(f"Security code: {tc.security_code}")
         security_code_field = wait_for_element(
             browser,
             (By.ID, SECURITY_CODE_ID),
@@ -48,12 +52,12 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
         security_code_field.send_keys(tc.security_code)  # type: ignore
 
         # Click redeem button
-        print("[TANGO SCRAPER] Clicking redeem button...")
+        logger.info("Clicking redeem button...")
         redeem_button = browser.find_element(By.CSS_SELECTOR, REDEEM_BUTTON_CSS_SELECTOR)  # type: ignore
         redeem_button.click()
 
         # Check whether the security code was valid or not
-        print("[TANGO SCRAPER] Checking whether the security code was valid...")
+        logger.info("Checking whether the security code was valid or not...")
         heads_up = wait_for_element(
             browser,
             (By.CSS_SELECTOR, HEADS_UP_CSS_SELECTOR),
@@ -61,11 +65,11 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
         # Check whether the heads up message is a success or an error
         if HEADS_UP_ERROR_CLASS in heads_up.get_attribute("class"):  # type: ignore
             # Invalid security code
-            print("[ERROR] Failed to redeem Tango Card")
+            logger.error("Failed to redeem Tango Card")
             continue
 
         # Valid security code
-        print("[TANGO SCRAPER] Tango Card successfully redeemed")
+        logger.info("Tango Card successfully redeemed")
 
         # Wait for Amazon gift card code to be visible and get it
         redeem_code = (

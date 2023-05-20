@@ -1,5 +1,6 @@
 config.yaml
 results.txt
+amz_tango_card_scraper.log
 __pycache__
 .venv
 .mypy_cache

@@ -8,12 +8,16 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 
 from amz_tango_card_scraper.browser.extra_actions import wait_for_element
+from amz_tango_card_scraper.utils.logger import setup_logger
 from amz_tango_card_scraper.utils.otp import get_otp_code
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
     from amz_tango_card_scraper.utils.schemas import AmazonCard
+
+
+logger = setup_logger(logger_name=__name__)
 
 
 def get_amazon_sign_in_link(amazon_link: str) -> str:
@@ -65,10 +69,12 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     sign_in_link = get_amazon_sign_in_link(amazon_link)
 
     # Get to sign in page
+    logger.info("Signing in to Amazon...")
     browser.get(sign_in_link)
 
     # Write email
-    print("[AMAZON SIGN IN] Writing email...")
+    logger.info("Writing email...")
+    logger.debug(f"Email: {email}")
     email_field = wait_for_element(browser, (By.ID, EMAIL_FIELD_ID))
     email_field.send_keys(email)  # type: ignore
 
@@ -77,12 +83,13 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     continue_btn.click()
 
     # Write password
-    print("[AMAZON SIGN IN] Writing password...")
+    logger.info("Writing password...")
+    logger.debug(f"Password: {password}")
     try:
         password_field = wait_for_element(browser, (By.ID, PASSWORD_FIELD_ID))
     except TimeoutException:
         # Malformed email in previous step
-        raise ValueError("Malformed email")
+        raise ValueError("Malformed email or CAPTCHA required")
     password_field.send_keys(password)  # type: ignore
 
     # Click sign in (before OTP)
@@ -90,8 +97,9 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     sign_in_btn_1.click()
 
     # Write OTP code
-    print("[AMAZON SIGN IN] Writing OTP code...")
+    logger.info("Writing OTP code...")
     otp_code = get_otp_code(otp)
+    logger.debug(f"OTP code: {otp_code}")
     try:
         otp_field = wait_for_element(browser, (By.ID, OTP_FIELD_ID))
     except TimeoutException:
@@ -130,12 +138,13 @@ def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None
     browser.get(amazon_card.amazon_link + "/gc/redeem")
 
     # Write gift card code
-    print(f"[AMAZON REDEEMER] Writing gift card code {amazon_card.redeem_code}...")
+    logger.info("Writing gift card code...")
+    logger.debug(f"Gift card code: {amazon_card.redeem_code}")
     gift_card_code_field = wait_for_element(browser, (By.ID, GIFT_CARD_CODE_FIELD_ID))
     gift_card_code_field.send_keys(amazon_card.redeem_code)  # type: ignore
 
     # Click redeem button
-    print("[AMAZON REDEEMER] Redeeming code...")
+    logger.info("Clicking redeem button...")
     redeem_btn = browser.find_element(By.ID, REDEEM_BUTTON_ID)
     redeem_btn.click()
 
@@ -143,8 +152,8 @@ def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None
     try:
         wait_for_element(browser, (By.ID, SUCCESSFUL_REDEEM_BOX_ID), timeout=5)
     except TimeoutException:
-        print("[AMAZON REDEEMER] Code couldn't be redeemed!")
+        logger.info("Code couldn't be redeemed!")
         return
 
-    print("[AMAZON REDEEMER] Code was successfully redeemed!")
+    logger.info("Code has been successfully redeemed!")
     amazon_card.redeem_status = True

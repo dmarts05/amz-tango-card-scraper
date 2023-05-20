@@ -4,9 +4,12 @@ import email as em
 import imaplib
 from typing import List
 
+from amz_tango_card_scraper.utils.logger import setup_logger
 from amz_tango_card_scraper.utils.schemas import TangoCard
 
 from .helpers import extract_tango_card_from_body, get_body_of_email
+
+logger = setup_logger(logger_name=__name__)
 
 
 def scrape_tango_cards(email: str, app_password: str, from_list: List[str], trash: bool = False) -> List[TangoCard]:
@@ -34,6 +37,7 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
     tango_cards: List[TangoCard] = []
     # Search for Tango Card emails from the specified email addresses
     for from_address in from_list:
+        logger.info(f"Searching for Tango Cards from {from_address}...")
         # Fetch all emails from the specified email address
         _, msg_ids = mail.search(None, "FROM", from_address)
 
@@ -51,11 +55,13 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
 
                     # Check if body contains Tango Card
                     if "tango" in body:
+                        logger.info(f"Tango Card found in email {msg_id}")
                         # If it does, extract the Tango Card
                         tango_cards.append(extract_tango_card_from_body(body))
 
                         # Trash the email if specified
                         if trash:
+                            logger.info(f"Trashing email {msg_id}...")
                             mail.store(msg_id, "+X-GM-LABELS", "\\Trash")
 
     mail.close()
