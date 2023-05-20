@@ -49,8 +49,8 @@ def main() -> None:
     )
     print("[INFO] Tango Cards scraped successfully")
     if not tango_cards:
-        print("[ERROR] No Tango Cards found, exiting...")
-        exit(1)
+        print("[INFO] No Tango Cards found, exiting...")
+        exit(0)
 
     # **************************************************************
     # Get Selenium browser
