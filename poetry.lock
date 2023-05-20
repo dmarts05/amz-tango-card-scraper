@@ -32,6 +32,25 @@ tests = ["attrs[tests-no-zope]", "zope-interface"]
 tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "pytest-xdist[psutil]"]
 
 [[package]]
+name = "beautifulsoup4"
+version = "4.12.2"
+description = "Screen-scraping library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+files = [
+    {file = "beautifulsoup4-4.12.2-py3-none-any.whl", hash = "sha256:bd2520ca0d9d7d12694a53d44ac482d181b4ec1888909b035a3dbf40d0f57d4a"},
+    {file = "beautifulsoup4-4.12.2.tar.gz", hash = "sha256:492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da"},
+]
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "black"
 version = "23.3.0"
 description = "The uncompromising code formatter."
@@ -825,6 +844,18 @@ files = [
 ]
 
 [[package]]
+name = "soupsieve"
+version = "2.4.1"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "soupsieve-2.4.1-py3-none-any.whl", hash = "sha256:1c1bfee6819544a3447586c889157365a27e10d88cde3ad3da0cf0ddf646feb8"},
+    {file = "soupsieve-2.4.1.tar.gz", hash = "sha256:89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea"},
+]
+
+[[package]]
 name = "tqdm"
 version = "4.65.0"
 description = "Fast, Extensible Progress Meter"
@@ -882,6 +913,33 @@ files = [
 exceptiongroup = "*"
 trio = ">=0.11"
 wsproto = ">=0.14"
+
+[[package]]
+name = "types-beautifulsoup4"
+version = "4.12.0.5"
+description = "Typing stubs for beautifulsoup4"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-beautifulsoup4-4.12.0.5.tar.gz", hash = "sha256:d9be456416a62a5b9740559592e1063a69d4b0a1b83911d878558c8ae8e07074"},
+    {file = "types_beautifulsoup4-4.12.0.5-py3-none-any.whl", hash = "sha256:718364c8e6787884501c700b1d22b6c0a8711bf9d6c9bf96e1fba81495bc46a8"},
+]
+
+[package.dependencies]
+types-html5lib = "*"
+
+[[package]]
+name = "types-html5lib"
+version = "1.1.11.14"
+description = "Typing stubs for html5lib"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-html5lib-1.1.11.14.tar.gz", hash = "sha256:091e9e74e0ee37c93fd789a164e99b2af80ecf5a314280450c6a763d027ea209"},
+    {file = "types_html5lib-1.1.11.14-py3-none-any.whl", hash = "sha256:758c1a27f3b63363a346f3646be9f8b1f25df4fc1f96f88af6d1d831f24ad675"},
+]
 
 [[package]]
 name = "types-pyyaml"
@@ -1012,4 +1070,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "398c1a03b23bf754728d6c6736972570a4e408a5e54cfd96b1ace4ee7ab5b732"
+content-hash = "6ae7333568e0b55f262f4950895e987642e00619925aaeffc12e77d06ef78553"
