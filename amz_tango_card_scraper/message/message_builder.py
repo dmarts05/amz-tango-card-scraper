@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
-    from src.utils.schemas import AmazonCard, TangoCard
+    from amz_tango_card_scraper.utils.schemas import AmazonCard, TangoCard
 
 
 def build_tango_cards_message(tango_cards: List[TangoCard]) -> str:

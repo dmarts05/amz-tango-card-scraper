@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, List
 
 from selenium.webdriver.common.by import By
 
-from src.browser.extra_actions import wait_for_element
-from src.utils.schemas import AmazonCard
+from amz_tango_card_scraper.browser.extra_actions import wait_for_element
+from amz_tango_card_scraper.utils.schemas import AmazonCard
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
-    from src.utils.schemas import TangoCard
+    from amz_tango_card_scraper.utils.schemas import TangoCard
 
 
 def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) -> List[AmazonCard]:

@@ -3,25 +3,25 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: poetry run black src/
+        entry: poetry run black amz_tango_card_scraper/
         language: system
         always_run: true
         pass_filenames: false
       - id: isort
         name: isort
-        entry: poetry run isort src/
+        entry: poetry run isort amz_tango_card_scraper/
         language: system
         always_run: true
         pass_filenames: false
       - id: flake8
         name: flake8
-        entry: poetry run flake8 src/
+        entry: poetry run flake8 amz_tango_card_scraper/
         language: system
         always_run: true
         pass_filenames: false
       - id: mypy
         name: mypy
-        entry: poetry run mypy src/
+        entry: poetry run mypy amz_tango_card_scraper/
         language: system
         always_run: true
         pass_filenames: false

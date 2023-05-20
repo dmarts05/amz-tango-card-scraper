@@ -1,6 +1,6 @@
 import yaml
 
-from src.utils.schemas import ConfigFile
+from amz_tango_card_scraper.utils.schemas import ConfigFile
 
 from .helpers import (
     verify_amazon_section,

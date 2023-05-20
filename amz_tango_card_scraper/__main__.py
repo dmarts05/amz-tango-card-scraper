@@ -4,17 +4,19 @@ import os
 
 from requests.exceptions import RequestException
 
-from src.amazon_redeemer.amazon_redeemer import redeem_amazon_gift_cards
-from src.browser.chrome import get_chrome_browser
-from src.config_parser.config_parser import parse_config
-from src.gmail_scraper.gmail_scraper import scrape_tango_cards
-from src.message.message_builder import (
+from amz_tango_card_scraper.amazon_redeemer.amazon_redeemer import (
+    redeem_amazon_gift_cards,
+)
+from amz_tango_card_scraper.browser.chrome import get_chrome_browser
+from amz_tango_card_scraper.config_parser.config_parser import parse_config
+from amz_tango_card_scraper.gmail_scraper.gmail_scraper import scrape_tango_cards
+from amz_tango_card_scraper.message.message_builder import (
     build_amazon_cards_message,
     build_tango_cards_message,
 )
-from src.message.message_sender import send_message_to_telegram
-from src.message.message_storage import store_message
-from src.tango_scraper.tango_scraper import scrap_amazon_gift_cards
+from amz_tango_card_scraper.message.message_sender import send_message_to_telegram
+from amz_tango_card_scraper.message.message_storage import store_message
+from amz_tango_card_scraper.tango_scraper.tango_scraper import scrap_amazon_gift_cards
 
 
 def main() -> None:
