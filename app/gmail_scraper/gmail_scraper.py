@@ -42,14 +42,15 @@ def extract_tango_card_from_body(body: str) -> TangoCard:
     Returns:
         Extracted Tango Card.
     """
+    from .constants import SECURITY_CODE_CLASS, TANGO_LINK_CLASS
 
     soup = BeautifulSoup(body, "html.parser")
 
     # Extract the security code
-    security_code = soup.find_all("div", {"class": "tango-credential-value"})[3].get_text()
+    security_code = soup.find_all("div", {"class": SECURITY_CODE_CLASS})[3].get_text()
 
     # Extract Tango link
-    tango_link = soup.find_all("div", {"class": "tango-credential-key"})[3].find("a").get("href")
+    tango_link = soup.find_all("div", {"class": TANGO_LINK_CLASS})[3].find("a").get("href")
 
     # Extract Amazon link
     amazon_link = (  # type: ignore
