@@ -2,115 +2,115 @@
 
 import email as em
 import imaplib
+from email.message import Message
 from typing import List
+
+from bs4 import BeautifulSoup
 
 from app.utils.schemas import TangoCard
 
 
-def scrape_tango_cards(email: str, app_password: str, from_list: List[str], trash: bool = False) -> List[TangoCard]:
+def get_body_of_email(msg: Message) -> str:  # type: ignore
     """
-    Scrapes Tango Cards from Gmail using the specified email addresses.
+    Get the body of an email.
 
     Args:
-        email: the email address to use to connect to Gmail
-        app_password: the app password to use to connect to Gmail
-        from_list: a list of email addresses from which to check for
-                     Tango Card emails
-        trash: whether to trash the Tango Card emails after scraping them
+        msg: Email message.
 
     Returns:
-        A list of Tango Cards
+        Body of the email.
+    """
+    if msg.is_multipart():
+        for part in msg.walk():
+            ctype = part.get_content_type()
+            cdispo = str(part.get("Content-Disposition"))
+
+            # Skip any text/plain (txt) attachments
+            if ctype == "text/plain" and "attachment" not in cdispo:
+                return part.get_payload(decode=True).decode("utf-8")
+    else:
+        return msg.get_payload(decode=True).decode("utf-8")
+
+
+def extract_tango_card_from_body(body: str) -> TangoCard:
+    """
+    Extract Tango Card from the body of an email.
+
+    Args:
+        body: Body of the email.
+
+    Returns:
+        Extracted Tango Card.
+    """
+
+    soup = BeautifulSoup(body, "html.parser")
+
+    # Extract the security code
+    security_code = soup.find_all("div", {"class": "tango-credential-value"})[3].get_text()
+
+    # Extract Tango link
+    tango_link = soup.find_all("div", {"class": "tango-credential-key"})[3].find("a").get("href")
+
+    # Extract Amazon link
+    amazon_link = (  # type: ignore
+        "https://www.amazon."
+        + body.split("http://www.amazon.", 1)[1].split(  # type: ignore
+            "/",
+            1,
+        )[0]
+    )
+
+    return TangoCard(security_code=security_code, tango_link=tango_link, amazon_link=amazon_link)  # type: ignore
+
+
+def scrape_tango_cards(email: str, app_password: str, from_list: List[str], trash: bool = False) -> List[TangoCard]:
+    """
+    Scrape Tango Cards from Gmail using the IMAP protocol.
+
+    Args:
+        email: Gmail email address.
+        app_password: Gmail app password.
+        from_list: List of email addresses to search for Tango Cards.
+        trash: Whether to trash the emails after scraping them.
+
+    Returns:
+        List of scraped Tango Cards.
     """
     from .constants import EMAIL_FORMAT, IMAP_GMAIL_URL
 
-    # Connection with Gmail using SSL
-    with imaplib.IMAP4_SSL(IMAP_GMAIL_URL) as mail:
-        # Login to Gmail
-        mail.login(email, app_password)
+    # Establish connection with Gmail
+    mail = imaplib.IMAP4_SSL(IMAP_GMAIL_URL)
+    # Login to Gmail
+    mail.login(email, app_password)
+    # Select Inbox to search for Tango Card emails
+    mail.select("inbox")
 
-        # Select Inbox to search for Tango Card emails
-        mail.select("Inbox")
+    tango_cards: List[TangoCard] = []
+    # Search for Tango Card emails from the specified email addresses
+    for from_address in from_list:
+        # Fetch all emails from the specified email address
+        _, msg_ids = mail.search(None, "FROM", from_address)
 
-        # Search for Tango Card emails
-        tango_cards: List[TangoCard] = []
-        for from_email in from_list:
-            # Search for Tango Card emails from the specified email address
-            _, data = mail.search(None, "FROM", from_email)
-            email_ids = data[0].split()
+        # Iterate over all the emails
+        for msg_id in msg_ids[0].split():
+            # Fetch the email data (RFC822) for the given ID
+            _, msg_data = mail.fetch(msg_id, EMAIL_FORMAT)
 
-            # If there are no Tango Card emails, next email address
-            if not email_ids:
-                continue
+            # Iterate over all the responses
+            for response in msg_data:
+                # Check if the response is a tuple (contains the email data)
+                if isinstance(response, tuple):
+                    msg = em.message_from_bytes(response[1])
+                    body = get_body_of_email(msg)
 
-            # Capture all messages from the obtained email ids
-            msgs = [mail.fetch(id, EMAIL_FORMAT)[1] for id in email_ids]
+                    # Check if body contains Tango Card
+                    if "tango" in body:
+                        # If it does, extract the Tango Card
+                        tango_cards.append(extract_tango_card_from_body(body))
 
-            # Get tango security code and links from the messages
-            for id, msg in zip(email_ids, msgs):
-                # Get response part of the message
-                for response_part in msg:
-                    # If the response part is not a tuple
-                    # then continue with the next response part
-                    if not isinstance(response_part, tuple):
-                        # This means that the response part does not
-                        # contain information about the Tango Card
-                        continue
-
-                    # Get the message content from the response part
-                    msg_content = em.message_from_bytes(response_part[1])
-
-                    # Get code and links from the body of the message
-                    for part in msg_content.walk():
-                        text = part.get_payload()
-
-                        # Check if the text has multiple parts
-                        if isinstance(text, list):
-                            # This probably means that the text has been
-                            # forwarded
-                            # We only need the last part of the text in
-                            # this case (the body)
-                            text = (  # type: ignore
-                                text[-1].get_payload().replace("=\r\n", "")  # type: ignore # noqa: E501
-                            )
-
-                            security_code = text.split('tango-credential-value">')[4].split("<", 1)[0]  # type: ignore
-
-                            tango_link = text.split('tango-credential-key"><a href=3D"', 1)[1].split(  # type: ignore
-                                '"', 1
-                            )[0]
-
-                        else:
-                            security_code = text.split(
-                                "</div><div class='tango-credential-value'>",
-                                1,
-                            )[1].split(
-                                "<", 1
-                            )[0]
-
-                            tango_link = text.split(
-                                ("</div><div" " class='tango-credential-key'><a" " href='"),
-                                1,
-                            )[
-                                1
-                            ].split("'", 1)[0]
-
-                        amazon_link = (  # type: ignore
-                            "https://www.amazon."
-                            + text.split("http://www.amazon.", 1)[1].split(  # type: ignore # noqa: E501
-                                "/",
-                                1,
-                            )[0]
-                        )
-
-                        # Add Tango Card to the list
-                        tango_cards.append(
-                            TangoCard(security_code, tango_link, amazon_link)  # type: ignore # noqa: E501
-                        )
-
+                        # Trash the email if specified
                         if trash:
-                            # Move email to trash
-                            id = id.decode() if isinstance(id, bytes) else id
-                            mail.store(id, "+FLAGS", "\\Deleted")
+                            mail.store(msg_id, "+FLAGS", "\\Deleted")
 
-                        break
+    mail.close()
     return tango_cards
