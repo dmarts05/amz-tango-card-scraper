@@ -4,7 +4,7 @@ import email as em
 import imaplib
 from typing import List
 
-from app.utils.schemas import TangoCard
+from src.utils.schemas import TangoCard
 
 from .helpers import extract_tango_card_from_body, get_body_of_email
 

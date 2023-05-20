@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from app.utils.schemas import AmazonCard
+from src.utils.schemas import AmazonCard
 
 from .helpers import redeem_amazon_gift_card, sign_in_to_amazon
 

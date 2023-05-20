@@ -1,6 +1,6 @@
 import yaml
 
-from app.utils.schemas import ConfigFile
+from src.utils.schemas import ConfigFile
 
 from .helpers import (
     verify_amazon_section,
