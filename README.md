@@ -53,7 +53,7 @@ To set up the project, follow these steps:
 7. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
 8. Run the script:
     ```bash
-    python src/main.py
+    python -m amz_tango_card_scraper
     ```
     This will execute the script and start scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails.
 
@@ -75,7 +75,7 @@ This is an alternative installation method that uses pip instead of Poetry. It m
 4. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
 5. Run the script:
     ```bash
-    python src/main.py
+    python -m amz_tango_card_scraper
     ```
     This will execute the script and start scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails. 
 
@@ -87,15 +87,15 @@ If you want to contribute to the project or run the development environment, fol
     ```
 2. Format the code:
     ```bash
-    poetry run black src
+    poetry run black amz_tango_card_scraper
     ```
 3. Lint the code:
     ```bash
-    poetry run flake8 src
+    poetry run flake8 amz_tango_card_scraper
     ```
 4. Run static type checking:
     ```bash
-    poetry run mypy src
+    poetry run mypy amz_tango_card_scraper
     ```
 5. Run the tests:
     ```bash
