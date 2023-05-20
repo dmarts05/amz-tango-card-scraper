@@ -46,6 +46,9 @@ def main() -> None:
         trash=config.script.get("trash", False),
     )
     print("[INFO] Tango Cards scraped successfully")
+    if not tango_cards:
+        print("[ERROR] No Tango Cards found, exiting...")
+        exit(1)
 
     # **************************************************************
     # Get Selenium browser
