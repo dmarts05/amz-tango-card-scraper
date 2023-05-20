@@ -1,6 +1,9 @@
 config.yaml
 results.txt
 amz_tango_card_scraper.log
+.coverage
+coverage.xml
+.vscode
 __pycache__
 .venv
 .mypy_cache

@@ -101,6 +101,10 @@ If you want to contribute to the project or run the development environment, fol
     ```bash
     poetry run pytest tests
     ```
+    You can also run the tests with coverage:
+    ```bash
+    "poetry run pytest --cov=amz_tango_card_scraper --cov-report=xml tests"
+    ```
 6. Generate the documentation:
     ```bash
     cd docs && poetry run make html
