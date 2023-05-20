@@ -1,75 +1,109 @@
-# Amazon Tango Card Gmail Scraper
+# Amazon Tango Card Scraper
+Amazon Tango Card Scraper is a Python project that automates the process of scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails. The script is designed to extract Tango Cards from Gmail emails, retrieve the corresponding Amazon Gift Cards associated with those Tango Cards, automatically redeem the Amazon Gift Cards on Amazon (optional), and store the obtained codes in a file. Additionally, it offers the option to send the results to a Telegram bot chat.
 
-An automated solution for getting Amazon Gift Card codes from Microsoft Rewards emails.
+## Table of Contents
+* [Features](#features)
+* [Configuration](#configuration)
+* [Installation with Poetry (recommended)](#installation-with-poetry-recommended)
+* [Installation with pip](#installation-with-pip)
+* [Development Setup](#development-setup)
+* [Contributing](#contributing)
+* [License](#license)
 
-## Installation
+## Features
+* Scrape Tango Cards from Gmail emails.
+* Retrieve associated Amazon Gift Cards from the extracted Tango Cards.
+* Automatically redeem Amazon Gift Cards on Amazon.
+* Store obtained codes in a file.
+* Optional integration with a Telegram bot chat to receive the results.
 
-- Clone the repo.
+## Configuration
+Before running the script, make sure to configure the necessary settings in the `config.yaml` file. You can use the provided `config.example.yaml` file as a template.
 
-- Install requirements with the following command:
+## Installation with Poetry (recommended)
+To set up the project, follow these steps:
+1. Make sure you have [Poetry](https://python-poetry.org/) installed on your system.
+2. Clone the repository:
+    ```bash
+    git clone https://github.com/dmarts05/amz-tango-card-scraper.git
+    ```
+3. Navigate to the project directory:
+    ```bash
+    cd amz-tango-card-scraper
+    ```
+4. Install the project dependencies using Poetry:
+    ```bash
+    poetry install
+    ```
+    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file.
+5. Activate the virtual environment:
+    ```bash
+    poetry shell
+    ```
+    This will activate the virtual environment so that you can run the script.
+6. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
+7. Run the script:
+    ```bash
+    python src/main.py
+    ```
+    This will execute the script and start scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails.
 
-```
-pip install -r requirements.txt
-```
+## Installation with pip
+This is an alternative installation method that uses pip instead of Poetry. It might not work as expected, so it is recommended to use the Poetry installation method instead. To set up the project, follow these steps:
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/dmarts05/amz-tango-card-scraper.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd amz-tango-card-scraper
+    ```
+3. Install the project dependencies using pip:
+    ```bash
+    pip install -r requirements.txt
+    ```
+    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `requirements.txt` file.
+4. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
+5. Run the script:
+    ```bash
+    python src/main.py
+    ```
+    This will execute the script and start scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails. 
 
-- Make sure you have Chrome installed.
+## Development Setup
+If you want to contribute to the project or run the development environment, follow these additional steps:
+1. Install the development dependencies:
+    ```bash
+    poetry install --with dev
+    ```
+2. Format the code:
+    ```bash
+    poetry run black src
+    ```
+3. Lint the code:
+    ```bash
+    poetry run flake8 src
+    ```
+4. Run static type checking:
+    ```bash
+    poetry run mypy src
+    ```
+5. Run the tests:
+    ```bash
+    poetry run pytest tests
+    ```
+6. Generate the documentation:
+    ```bash
+    cd docs && poetry run make html
+    ```
+7. Do everything at once (except for generating the documentation):
+    ```bash
+    poetry run pre-commit run --all-files
+    ```
+That's it! You now have the project set up and ready for development or execution.
 
-- Edit account.json.sample with the GMAIL email credentials of the account that you want the script to run on, and rename it by removing .sample at the end of the file name. Visit https://myaccount.google.com/apppasswords after enabling 2FA to get the required password. The syntax is the following:
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-```json
-[
-  {
-    "username": "email@gmail.com",
-    "password": "GoogleAppPassword"
-  }
-]
-```
-
-- Edit email.json.sample with your GMAIL email credentials if you want to receive email alerts. Again, visit https://myaccount.google.com/apppasswords after enabling 2FA to get the required password and rename it by removing .sample at the end of the file name. The syntax is the following:
-
-```json
-[
-  {
-    "sender": "sender@example.com",
-    "password": "GoogleAppPassword",
-    "receiver": "receiver@example.com"
-  }
-]
-```
-
-- Edit from.json.sample with the emails that will be able to send you Microsoft Rewards Tango Card emails (you can set up email forwarding to a single account and include those accounts in this json so they can be detected by the script). Don't forget to rename it by removing .sample at the end of the file name. The syntax is the following:
-
-```json
-[
-  {
-    "email": "microsoftrewards@email.microsoftrewards.com"
-  },
-  {
-    "email": "email@example.com"
-  }
-]
-```
-
-- Edit amazon.json.sample with your Amazon credentials if you want to enable the auto-redeem feature (WIP). You'll need an OTP code from Amazon, refer to this webpage to obtain it: https://www.amazon.com/gp/help/customer/display.html?nodeId=G3PWZPU52FKN7PW4. Don't forget to rename it removing .sample at the end of the file name. The syntax is the following:
-
-```json
-[
-  {
-    "username": "email@example.com",
-    "password": "pass1234",
-    "otp": "OtpAmazonCode"
-  }
-]
-```
-
-- Due to limits of Ipapi sometimes it returns error and it causes bot stops. You can define a default language and location to prevent it (in the script).
-
-- Run the script.
-
-## Optional arguments
-
-- `--headless ` Run the script in headless mode.
-- `--fakeheadless` Run the script in headless mode through a virtual display (Linux servers only). Avoid using headless and fakeheadless modes together.
-- `--trash` Move to trash read emails.
-- `--emailalerts` Enable GMAIL email alerts when obtaining codes.
-- `--redeem` Redeem obtained codes in amazon (WIP).
+## License
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). See the [LICENSE](LICENSE) file for details.
