@@ -39,7 +39,7 @@ To set up the project, follow these steps:
     ```bash
     poetry install
     ```
-    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file.
+    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file. If that's the case, run `pyenv install 3.11.3` before running the previous command. Also, check out the [Poetry documentation about pyenv](https://python-poetry.org/docs/managing-environments/) for more information.
 5. Activate the virtual environment:
     ```bash
     poetry shell
