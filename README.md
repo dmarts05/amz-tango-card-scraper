@@ -27,26 +27,31 @@ Before running the script, make sure to configure the necessary settings in the 
 ## Installation with Poetry (recommended)
 To set up the project, follow these steps:
 1. Make sure you have [Poetry](https://python-poetry.org/) installed on your system.
-2. Clone the repository:
+2. It is highly recommended to set this Poetry configuration parameter to avoid multiple issues:
+    ```bash
+    poetry config virtualenvs.in-project true
+    poetry config virtualenvs.prefer-active-python true
+    ```
+3. Clone the repository:
     ```bash
     git clone https://github.com/dmarts05/amz-tango-card-scraper.git
     ```
-3. Navigate to the project directory:
+4. Navigate to the project directory:
     ```bash
     cd amz-tango-card-scraper
     ```
-4. Install the project dependencies using Poetry:
+5. Install the project dependencies using Poetry:
     ```bash
     poetry install
     ```
     You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file. If that's the case, run `pyenv install 3.9` before running the previous command. Also, check out the [Poetry documentation about pyenv](https://python-poetry.org/docs/managing-environments/) for more information.
-5. Activate the virtual environment:
+6. Activate the virtual environment:
     ```bash
     poetry shell
     ```
     This will activate the virtual environment so that you can run the script.
-6. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
-7. Run the script:
+7. Configure the script by updating the `config.yaml` file with your specific information (as mentioned in the previous section).
+8. Run the script:
     ```bash
     python src/main.py
     ```
