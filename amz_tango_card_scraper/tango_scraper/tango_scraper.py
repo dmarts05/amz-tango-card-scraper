@@ -43,17 +43,17 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
         browser.get(tc.tango_link)
 
         # Send security code to security code field (wait until it is visible)
-        logger.info("Writing security code to security code field...")
         logger.debug(f"Security code: {tc.security_code}")
         security_code_field = wait_for_element(
             browser,
             (By.ID, SECURITY_CODE_ID),
         )
+        logger.info("Writing security code to security code field...")
         security_code_field.send_keys(tc.security_code)  # type: ignore
 
         # Click redeem button
-        logger.info("Clicking redeem button...")
         redeem_button = browser.find_element(By.CSS_SELECTOR, REDEEM_BUTTON_CSS_SELECTOR)  # type: ignore
+        logger.info("Clicking redeem button...")
         redeem_button.click()
 
         # Check whether the security code was valid or not

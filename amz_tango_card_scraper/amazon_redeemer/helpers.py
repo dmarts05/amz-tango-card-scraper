@@ -73,9 +73,9 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     browser.get(sign_in_link)
 
     # Write email
-    logger.info("Writing email...")
     logger.debug(f"Email: {email}")
     email_field = wait_for_element(browser, (By.ID, EMAIL_FIELD_ID))
+    logger.info("Writing email...")
     email_field.send_keys(email)  # type: ignore
 
     # Click continue
@@ -83,13 +83,13 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     continue_btn.click()
 
     # Write password
-    logger.info("Writing password...")
     logger.debug(f"Password: {password}")
     try:
         password_field = wait_for_element(browser, (By.ID, PASSWORD_FIELD_ID))
     except TimeoutException:
         # Malformed email in previous step
         raise ValueError("Malformed email or CAPTCHA required")
+    logger.info("Writing password...")
     password_field.send_keys(password)  # type: ignore
 
     # Click sign in (before OTP)
@@ -97,14 +97,14 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     sign_in_btn_1.click()
 
     # Write OTP code
-    logger.info("Writing OTP code...")
     otp_code = get_otp_code(otp)
     logger.debug(f"OTP code: {otp_code}")
     try:
         otp_field = wait_for_element(browser, (By.ID, OTP_FIELD_ID))
     except TimeoutException:
         # Malformed password in previous step
-        raise ValueError("Malformed password")
+        raise ValueError("Malformed password or CAPTCHA required")
+    logger.info("Writing OTP code...")
     otp_field.send_keys(otp_code)  # type: ignore
 
     # Click sign in (after OTP)
@@ -117,7 +117,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
         wait_for_element(browser, (By.ID, NAV_LOGO_ID), timeout=5)
     except TimeoutException:
         # Malformed OTP code in previous step
-        raise ValueError("Malformed OTP code")
+        raise ValueError("Malformed OTP code or CAPTCHA required")
 
 
 def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None:
@@ -138,14 +138,14 @@ def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None
     browser.get(amazon_card.amazon_link + "/gc/redeem")
 
     # Write gift card code
-    logger.info("Writing gift card code...")
     logger.debug(f"Gift card code: {amazon_card.redeem_code}")
     gift_card_code_field = wait_for_element(browser, (By.ID, GIFT_CARD_CODE_FIELD_ID))
+    logger.info("Writing gift card code...")
     gift_card_code_field.send_keys(amazon_card.redeem_code)  # type: ignore
 
     # Click redeem button
-    logger.info("Clicking redeem button...")
     redeem_btn = browser.find_element(By.ID, REDEEM_BUTTON_ID)
+    logger.info("Clicking redeem button...")
     redeem_btn.click()
 
     # Check if code has been correctly redeemed
