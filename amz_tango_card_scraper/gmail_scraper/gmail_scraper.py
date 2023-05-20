@@ -56,7 +56,7 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
 
                         # Trash the email if specified
                         if trash:
-                            mail.store(msg_id, "+FLAGS", "\\Deleted")
+                            mail.store(msg_id, "+X-GM-LABELS", "\\Trash")
 
     mail.close()
     return tango_cards
