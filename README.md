@@ -1,4 +1,8 @@
 # Amazon Tango Card Scraper
+![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)
+![Python](https://img.shields.io/badge/Python-3.11.3-brightgreen.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+
 Amazon Tango Card Scraper is a Python project that automates the process of scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails. The script is designed to extract Tango Cards from Gmail emails, retrieve the corresponding Amazon Gift Cards associated with those Tango Cards, automatically redeem the Amazon Gift Cards on Amazon (optional), and store the obtained codes in a file. Additionally, it offers the option to send the results to a Telegram bot chat.
 
 ## Table of Contents
