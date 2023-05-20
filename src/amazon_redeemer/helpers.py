@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 
-from app.browser.extra_actions import wait_for_element
+from src.browser.extra_actions import wait_for_element
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver
 
-    from app.utils.schemas import AmazonCard
+    from src.utils.schemas import AmazonCard
 
 
 def get_amazon_sign_in_link(amazon_link: str) -> str:
@@ -50,7 +50,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
         ValueError: If the sign in process failed
     """
 
-    from app.utils.otp import get_otp_code
+    from src.utils.otp import get_otp_code
 
     from .constants import (
         CONTINUE_BUTTON_ID,

@@ -2,7 +2,7 @@ from email.message import Message
 
 from bs4 import BeautifulSoup
 
-from app.utils.schemas import TangoCard
+from src.utils.schemas import TangoCard
 
 
 def get_body_of_email(msg: Message) -> str:  # type: ignore

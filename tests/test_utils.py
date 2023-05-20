@@ -1,5 +1,5 @@
 import pytest
-from app.utils.otp import get_otp_code
+from src.utils.otp import get_otp_code
 
 
 def test_get_otp_code():
