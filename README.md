@@ -1,6 +1,6 @@
 # Amazon Tango Card Scraper
 ![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)
-![Python](https://img.shields.io/badge/Python-3.11.3-brightgreen.svg)
+![Python](https://img.shields.io/badge/Python-3.9-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 Amazon Tango Card Scraper is a Python project that automates the process of scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails. The script is designed to extract Tango Cards from Gmail emails, retrieve the corresponding Amazon Gift Cards associated with those Tango Cards, automatically redeem the Amazon Gift Cards on Amazon (optional), and store the obtained codes in a file. Additionally, it offers the option to send the results to a Telegram bot chat.
@@ -39,7 +39,7 @@ To set up the project, follow these steps:
     ```bash
     poetry install
     ```
-    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file. If that's the case, run `pyenv install 3.11.3` before running the previous command. Also, check out the [Poetry documentation about pyenv](https://python-poetry.org/docs/managing-environments/) for more information.
+    You might need [pyenv](https://github.com/pyenv/pyenv) to install the Python version specified in the `pyproject.toml` file. If that's the case, run `pyenv install 3.9` before running the previous command. Also, check out the [Poetry documentation about pyenv](https://python-poetry.org/docs/managing-environments/) for more information.
 5. Activate the virtual environment:
     ```bash
     poetry shell
