@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
 
 if TYPE_CHECKING:
     from amz_tango_card_scraper.utils.schemas import AmazonCard, TangoCard
@@ -27,7 +27,7 @@ def build_tango_cards_message(tango_cards: List[TangoCard]) -> str:
     return title + body
 
 
-def build_amazon_cards_message(amazon_cards: List[AmazonCard]) -> str:
+def build_amazon_cards_message(amazon_cards: List[AmazonCard], balance_results: Tuple[str, str]) -> str:
     """
     Builds a message that contains the amazon cards.
 
@@ -43,6 +43,10 @@ def build_amazon_cards_message(amazon_cards: List[AmazonCard]) -> str:
 
     title = "******************\n" + "*  AMAZON CARDS  *\n" + "******************\n"
     body = "\n\n".join([str(i + 1) + " - " + str(tc) for i, tc in enumerate(amazon_cards)])
+
+    # Add the balance results to the body if they are not empty
+    if balance_results[0] and balance_results[1]:
+        body += f"\n\nPrevious balance: {balance_results[0]}\nCurrent balance: {balance_results[1]}"
 
     # Check if any of the cards has not been redeemed
     if any([not ac.redeem_status for ac in amazon_cards]):

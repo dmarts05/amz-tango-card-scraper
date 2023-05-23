@@ -10,6 +10,8 @@ OTP_FIELD_ID = "auth-mfa-otpcode"
 SIGN_IN_BTN_2_ID = "auth-signin-button"
 NAV_LOGO_ID = "nav-logo"
 
+BALANCE_ELEMENT_ID = "gc-current-balance"
+
 GIFT_CARD_CODE_FIELD_ID = "gc-redemption-input"
 REDEEM_BUTTON_ID = "gc-redemption-apply-button"
 SUCCESSFUL_REDEEM_BOX_ID = "alertRedemptionSuccess"

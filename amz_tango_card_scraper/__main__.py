@@ -72,11 +72,13 @@ def main() -> None:
     # **************************************************************
     # Get Selenium browser
     # **************************************************************
+    logger.info("Loading Selenium browser...")
     browser = get_chrome_browser(
         headless=config.script.get("headless", True),
         no_images=config.script.get("no_images", True),
         no_webdriver_manager=config.script.get("no_webdriver_manager", False),
     )
+    logger.info("Selenium browser loaded successfully")
 
     # **************************************************************
     # Scrape Amazon gift card codes from Tango Cards
@@ -84,15 +86,16 @@ def main() -> None:
     logger.info("Scraping Amazon gift card codes from Tango Cards...")
     amazon_cards = scrap_amazon_gift_cards(browser=browser, tango_cards=tango_cards)
     logger.info("Finished scraping Amazon gift card codes from Tango Cards")
-    logger.debug(f"Amazon gift card codes: {amazon_cards}")
+    logger.debug(f"Amazon gift card codes: {[str(ac) for ac in amazon_cards]}")
 
     # **************************************************************
     # Attempt to redeem Amazon gift card codes if enabled
     # **************************************************************
+    balance_results = ("", "")
     if config.script.get("redeem_amz", False):
         logger.info("Attempting to redeem Amazon gift card codes...")
         try:
-            redeem_amazon_gift_cards(
+            balance_results = redeem_amazon_gift_cards(
                 browser=browser,
                 amazon_cards=amazon_cards,
                 email=config.amazon.get("email", ""),
@@ -100,7 +103,8 @@ def main() -> None:
                 otp=config.amazon.get("otp", ""),
             )
             logger.info("Finished redeeming Amazon gift card codes")
-            logger.debug(f"Amazon gift card codes: {amazon_cards}")
+            logger.debug(f"Amazon gift card codes: {[str(ac) for ac in amazon_cards]}")
+            logger.debug(f"Balance results: {balance_results}")
         except ValueError as e:
             logger.error(str(e))
 
@@ -110,11 +114,14 @@ def main() -> None:
     # **************************************************************
     # Build message that is going to be stored and/or sent
     # **************************************************************
-    message = (
-        build_tango_cards_message(tango_cards=tango_cards)
-        + "\n\n"
-        + build_amazon_cards_message(amazon_cards=amazon_cards)
-    )
+    if config.script.get("redeem_amz", False):
+        message = (
+            build_tango_cards_message(tango_cards=tango_cards)
+            + "\n\n"
+            + build_amazon_cards_message(amazon_cards=amazon_cards, balance_results=balance_results)
+        )
+    else:
+        message = build_tango_cards_message(tango_cards=tango_cards)
     logger.debug(f"Message: {message}")
     # Get path of the file that is going to store the message
     message_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results.txt"))

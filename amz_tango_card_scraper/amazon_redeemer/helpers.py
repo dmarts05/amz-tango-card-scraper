@@ -120,6 +120,35 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
         raise ValueError("Malformed OTP code or CAPTCHA required")
 
 
+def get_amazon_balance(browser: WebDriver, amazon_link: str) -> str:
+    """
+    Get the current amazon balance
+
+    Args:
+        browser: The browser to use
+        amazon_link: The amazon link that will be used to get the balance
+
+    Returns:
+        The current amazon balance as a string or an empty string if the balance could not be retrieved
+    """
+    from .constants import BALANCE_ELEMENT_ID
+
+    # Get to balance page
+    logger.info("Getting current Amazon balance...")
+    browser.get(amazon_link + "/gc/redeem")
+
+    # Get balance
+    try:
+        balance_element = wait_for_element(browser, (By.ID, BALANCE_ELEMENT_ID))
+        balance = balance_element.text
+    except TimeoutException:
+        logger.warning("Could not get current Amazon balance")
+        return ""
+
+    logger.info(f"Current Amazon balance: {balance}")
+    return balance
+
+
 def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None:
     """
     Redeem the given amazon gift card
