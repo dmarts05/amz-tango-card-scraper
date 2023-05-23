@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service
@@ -18,6 +18,7 @@ def get_chrome_browser(
     headless: bool = True,
     no_images: bool = True,
     no_webdriver_manager: bool = False,
+    proxies: List[str] = [],
 ) -> WebDriver:
     """
     Returns a configured Chrome browser instance.
@@ -30,7 +31,7 @@ def get_chrome_browser(
     Returns:
         A Chrome browser instance
     """
-    options = get_chrome_browser_options(headless, no_images)
+    options = get_chrome_browser_options(headless, no_images, proxies)
     browser = (
         Chrome(service=Service(ChromeDriverManager().install()), options=options)
         if not no_webdriver_manager

@@ -77,6 +77,7 @@ def main() -> None:
         headless=config.script.get("headless", True),
         no_images=config.script.get("no_images", True),
         no_webdriver_manager=config.script.get("no_webdriver_manager", False),
+        proxies=config.proxies.get("list", []) if config.proxies.get("enable", False) else [],  # type: ignore
     )
     logger.info("Selenium browser loaded successfully")
 

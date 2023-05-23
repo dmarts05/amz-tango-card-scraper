@@ -4,6 +4,12 @@ import platform
 
 import requests
 from selenium.webdriver.chrome.options import Options
+from typing import List
+from .proxies import get_random_working_proxy
+
+from amz_tango_card_scraper.utils.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 def get_browser_language() -> str:
@@ -31,7 +37,7 @@ def get_browser_language() -> str:
     return lang
 
 
-def get_chrome_browser_options(headless: bool = True, no_images: bool = True) -> Options:
+def get_chrome_browser_options(headless: bool = True, no_images: bool = True, proxies: List[str] = []) -> Options:
     """
     Returns a configured Chrome browser options instance.
 
@@ -71,6 +77,15 @@ def get_chrome_browser_options(headless: bool = True, no_images: bool = True) ->
     # Add headless option if specified
     if headless:
         options.add_argument("--headless")  # type: ignore
+    # Add proxies if specified
+    if proxies:
+        proxy = get_random_working_proxy(proxies)
+        # Only add a proxy if a working one was found
+        if proxy:
+            logger.info(f"Using proxy {proxy}")
+            options.add_argument(f"--proxy-server={proxy}")  # type: ignore
+        else:
+            logger.warning("No working proxies found, defaulting to no proxy")
 
     # Add options specific to Linux
     if platform.system() == "Linux":

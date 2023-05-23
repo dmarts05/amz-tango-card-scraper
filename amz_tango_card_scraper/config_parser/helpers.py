@@ -1,6 +1,6 @@
 """Module that contains helper functions for the config parser."""
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 def verify_gmail_section(gmail: Dict[str, str]) -> Dict[str, str]:
@@ -85,6 +85,26 @@ def verify_script_section(script: Dict[str, bool]) -> Dict[str, bool]:
     if not all(field in script for field in required_fields):
         raise ValueError("Missing required field(s) in Script section of config file.")
     return script
+
+
+def verify_proxies_section(proxies: Union[Dict[str, bool], Dict[str, str]]) -> Union[Dict[str, bool], Dict[str, str]]:
+    """
+    Verify the Proxies section of the config file.
+
+    Args:
+        proxies: The Proxies section of the config file.
+
+    Raises:
+        ValueError: If the Proxies section is invalid.
+
+    Returns:
+        The verified Proxies section of the config file.
+    """
+
+    required_fields = ("enable", "list")
+    if not all(field in proxies for field in required_fields):
+        raise ValueError("Missing required field(s) in Proxies section of config file.")
+    return proxies
 
 
 def verify_telegram_section(telegram: Dict[str, str]) -> Dict[str, str]:

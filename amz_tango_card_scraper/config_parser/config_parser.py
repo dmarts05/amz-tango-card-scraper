@@ -7,6 +7,7 @@ from .helpers import (
     verify_from_section,
     verify_gmail_section,
     verify_script_section,
+    verify_proxies_section,
     verify_telegram_section,
 )
 
@@ -43,7 +44,12 @@ def parse_config(file_path: str) -> ConfigFile:
         # Verify and extract Script section
         script = verify_script_section(yaml_config.get("script", {}))
 
+        # Verify and extract Proxies section
+        proxies = verify_proxies_section(yaml_config.get("proxies", {}))
+
         # Verify and extract Telegram section
         telegram = verify_telegram_section(yaml_config.get("telegram", {}))
 
-    return ConfigFile(gmail=gmail, amazon=amazon, from_list=from_list, script=script, telegram=telegram)
+    return ConfigFile(
+        gmail=gmail, amazon=amazon, from_list=from_list, script=script, proxies=proxies, telegram=telegram
+    )

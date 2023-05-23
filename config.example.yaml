@@ -29,6 +29,15 @@ script:
   redeem_amz: True # Set to True to redeem Amazon codes automatically
   no_webdriver_manager: False # Set to True to disable webdriver_manager
 
+# Proxy configuration
+# Note 1: The program will fall back to no proxy if the proxy list is empty or if all proxies fail
+# Note 2: Only non-authenticated http or https proxies are supported
+proxies:
+  enable: False # Set to True to enable proxies for the browser
+  list: # List of proxies to use. One will be chosen randomly
+    - 10.10.10.10:8080
+    - 9.9.9.9:8080
+
 # Telegram bot for sending reports
 # Note 1: You must create a Telegram bot and get the bot token: https://core.telegram.org/bots#6-botfather
 # Note 2: You must get the channel ID for the channel associated with the bot: https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id

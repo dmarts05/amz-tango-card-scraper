@@ -1,3 +1,4 @@
+"""Module for testing the utils module."""
 import pytest
 from amz_tango_card_scraper.utils.otp import get_otp_code
 
