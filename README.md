@@ -26,7 +26,7 @@ Before running the script, make sure to configure the necessary settings in the 
 
 ## Installation with Poetry (recommended)
 To set up the project, follow these steps:
-1. Make sure you have [Poetry](https://python-poetry.org/) installed on your system.
+1. Make sure you have [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer) installed in your system.
 2. It is highly recommended to set this Poetry configuration parameter to avoid multiple issues:
     ```bash
     poetry config virtualenvs.in-project true
