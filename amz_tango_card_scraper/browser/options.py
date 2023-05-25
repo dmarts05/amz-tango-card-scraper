@@ -1,13 +1,14 @@
 """Module for getting browser options for Selenium."""
 
 import platform
+from typing import List
 
 import requests
 from selenium.webdriver.chrome.options import Options
-from typing import List
-from .proxies import get_random_working_proxy
 
 from amz_tango_card_scraper.utils.logger import setup_logger
+
+from .proxies import get_random_working_proxy
 
 logger = setup_logger(__name__)
 

@@ -6,8 +6,8 @@ from .helpers import (
     verify_amazon_section,
     verify_from_section,
     verify_gmail_section,
-    verify_script_section,
     verify_proxies_section,
+    verify_script_section,
     verify_telegram_section,
 )
 

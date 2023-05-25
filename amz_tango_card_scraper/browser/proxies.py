@@ -1,7 +1,7 @@
 import random
-import requests
-
 from typing import List
+
+import requests
 from requests.exceptions import RequestException
 
 

@@ -31,7 +31,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
         AMZ_GIFT_CARD_CODE_WRAPPER_CSS_SELECTOR,
         HEADS_UP_CSS_SELECTOR,
         HEADS_UP_ERROR_CLASS,
-        REDEEM_BUTTON_CSS_SELECTOR,
+        REDEEM_BUTTON_ID,
         SECURITY_CODE_ID,
     )
 
@@ -52,7 +52,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
         security_code_field.send_keys(tc.security_code)  # type: ignore
 
         # Click redeem button
-        redeem_button = browser.find_element(By.CSS_SELECTOR, REDEEM_BUTTON_CSS_SELECTOR)  # type: ignore
+        redeem_button = browser.find_element(By.ID, REDEEM_BUTTON_ID)  # type: ignore
         logger.info("Clicking redeem button...")
         redeem_button.click()
 

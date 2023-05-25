@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Tuple
 
 from amz_tango_card_scraper.utils.schemas import AmazonCard
 
-from .helpers import redeem_amazon_gift_card, sign_in_to_amazon, get_amazon_balance
+from .helpers import get_amazon_balance, redeem_amazon_gift_card, sign_in_to_amazon
 
 if TYPE_CHECKING:
     from selenium.webdriver.chrome.webdriver import WebDriver

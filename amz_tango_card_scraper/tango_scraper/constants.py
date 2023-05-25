@@ -1,8 +1,8 @@
 """Module containing constants for the Tango scraper."""
 
-SECURITY_CODE_ID = "input-47"
+SECURITY_CODE_ID = "t-input"
 
-REDEEM_BUTTON_CSS_SELECTOR = 'button[data-test-id="activateRewardButton"]'
+REDEEM_BUTTON_ID = "btn-primary"
 
 HEADS_UP_CSS_SELECTOR = ".v-snack__wrapper"
 
