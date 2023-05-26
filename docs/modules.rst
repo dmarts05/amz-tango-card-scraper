@@ -1,7 +1,7 @@
-src
-===
+amz_tango_card_scraper
+======================
 
 .. toctree::
    :maxdepth: 4
 
-   src
+   amz_tango_card_scraper
