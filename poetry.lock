@@ -1023,6 +1023,22 @@ trio-websocket = ">=0.9,<1.0"
 urllib3 = {version = ">=1.26,<3", extras = ["socks"]}
 
 [[package]]
+name = "selenium-stealth"
+version = "1.0.6"
+description = "Trying to make python selenium more stealthy."
+optional = false
+python-versions = ">=3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+files = [
+    {file = "selenium_stealth-1.0.6-py3-none-any.whl", hash = "sha256:b62da5452aa4a84f29a4dfb21a9696aff20788a7c570dd0b81bc04a940848b97"},
+]
+
+[package.dependencies]
+selenium = "*"
+
+[package.extras]
+test = ["pytest"]
+
+[[package]]
 name = "setuptools"
 version = "67.8.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -1452,4 +1468,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9"
-content-hash = "3ab78505a0839ba0d3638c05462136cc83f3923e1df8c15c34bd42ef1ad3f3aa"
+content-hash = "1effd48a2cc46b9eae4c51ff034e8e206941e5bf1cdb590913cdc5fa856ec050"

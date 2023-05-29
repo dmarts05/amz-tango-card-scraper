@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, List
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service
+from selenium_stealth import stealth  # type: ignore
 from webdriver_manager.chrome import ChromeDriverManager
 
 from .options import get_chrome_browser_options
@@ -36,5 +37,15 @@ def get_chrome_browser(
         Chrome(service=Service(ChromeDriverManager().install()), options=options)
         if not no_webdriver_manager
         else Chrome(options=options)
+    )
+    # Enable stealth mode for the browser to avoid detection
+    stealth(
+        browser,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True,
     )
     return browser

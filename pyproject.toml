@@ -14,6 +14,7 @@ webdriver-manager = "^3.8.6"
 pyyaml = "^6.0"
 pyotp = "^2.8.0"
 beautifulsoup4 = "^4.12.2"
+selenium-stealth = "^1.0.6"
 
 [tool.poetry.group.dev]
 optional = true
