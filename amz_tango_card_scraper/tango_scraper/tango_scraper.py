@@ -4,7 +4,10 @@ from typing import TYPE_CHECKING, List
 
 from selenium.webdriver.common.by import By
 
-from amz_tango_card_scraper.browser.extra_actions import wait_for_element
+from amz_tango_card_scraper.browser.extra_actions import (
+    wait_for_element_until_clickable,
+    wait_for_element_until_visible,
+)
 from amz_tango_card_scraper.utils.logger import setup_logger
 from amz_tango_card_scraper.utils.schemas import AmazonCard
 
@@ -44,7 +47,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
 
         # Send security code to security code field (wait until it is visible)
         logger.debug(f"Security code: {tc.security_code}")
-        security_code_field = wait_for_element(
+        security_code_field = wait_for_element_until_clickable(
             browser,
             (By.ID, SECURITY_CODE_ID),
         )
@@ -58,7 +61,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
 
         # Check whether the security code was valid or not
         logger.info("Checking whether the security code was valid or not...")
-        heads_up = wait_for_element(
+        heads_up = wait_for_element_until_visible(
             browser,
             (By.CSS_SELECTOR, HEADS_UP_CSS_SELECTOR),
         )
@@ -73,7 +76,7 @@ def scrap_amazon_gift_cards(browser: WebDriver, tango_cards: List[TangoCard]) ->
 
         # Wait for Amazon gift card code to be visible and get it
         redeem_code = (
-            wait_for_element(  # type: ignore
+            wait_for_element_until_visible(  # type: ignore
                 browser,
                 (
                     By.CSS_SELECTOR,

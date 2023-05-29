@@ -7,7 +7,10 @@ from typing import TYPE_CHECKING
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 
-from amz_tango_card_scraper.browser.extra_actions import wait_for_element
+from amz_tango_card_scraper.browser.extra_actions import (
+    wait_for_element_until_clickable,
+    wait_for_element_until_visible,
+)
 from amz_tango_card_scraper.utils.logger import setup_logger
 from amz_tango_card_scraper.utils.otp import get_otp_code
 
@@ -74,7 +77,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
 
     # Write email
     logger.debug(f"Email: {email}")
-    email_field = wait_for_element(browser, (By.ID, EMAIL_FIELD_ID))
+    email_field = wait_for_element_until_clickable(browser, (By.ID, EMAIL_FIELD_ID))
     logger.info("Writing email...")
     email_field.send_keys(email)  # type: ignore
 
@@ -85,7 +88,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     # Write password
     logger.debug(f"Password: {password}")
     try:
-        password_field = wait_for_element(browser, (By.ID, PASSWORD_FIELD_ID))
+        password_field = wait_for_element_until_clickable(browser, (By.ID, PASSWORD_FIELD_ID))
     except TimeoutException:
         # Malformed email in previous step
         raise ValueError("Malformed email or CAPTCHA required")
@@ -100,7 +103,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     otp_code = get_otp_code(otp)
     logger.debug(f"OTP code: {otp_code}")
     try:
-        otp_field = wait_for_element(browser, (By.ID, OTP_FIELD_ID))
+        otp_field = wait_for_element_until_clickable(browser, (By.ID, OTP_FIELD_ID))
     except TimeoutException:
         # Malformed password in previous step
         raise ValueError("Malformed password or CAPTCHA required")
@@ -114,7 +117,7 @@ def sign_in_to_amazon(browser: WebDriver, email: str, password: str, otp: str, a
     # Check if we have managed to successfully sign in
     # To do so, we need to check wether the nav-logo is present or not
     try:
-        wait_for_element(browser, (By.ID, NAV_LOGO_ID), timeout=5)
+        wait_for_element_until_visible(browser, (By.ID, NAV_LOGO_ID), timeout=5)
     except TimeoutException:
         # Malformed OTP code in previous step
         raise ValueError("Malformed OTP code or CAPTCHA required")
@@ -139,7 +142,7 @@ def get_amazon_balance(browser: WebDriver, amazon_link: str) -> str:
 
     # Get balance
     try:
-        balance_element = wait_for_element(browser, (By.ID, BALANCE_ELEMENT_ID))
+        balance_element = wait_for_element_until_visible(browser, (By.ID, BALANCE_ELEMENT_ID))
         balance = balance_element.text
     except TimeoutException:
         logger.warning("Could not get current Amazon balance")
@@ -168,7 +171,7 @@ def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None
 
     # Write gift card code
     logger.debug(f"Gift card code: {amazon_card.redeem_code}")
-    gift_card_code_field = wait_for_element(browser, (By.ID, GIFT_CARD_CODE_FIELD_ID))
+    gift_card_code_field = wait_for_element_until_clickable(browser, (By.ID, GIFT_CARD_CODE_FIELD_ID))
     logger.info("Writing gift card code...")
     gift_card_code_field.send_keys(amazon_card.redeem_code)  # type: ignore
 
@@ -179,7 +182,7 @@ def redeem_amazon_gift_card(browser: WebDriver, amazon_card: AmazonCard) -> None
 
     # Check if code has been correctly redeemed
     try:
-        wait_for_element(browser, (By.ID, SUCCESSFUL_REDEEM_BOX_ID), timeout=5)
+        wait_for_element_until_visible(browser, (By.ID, SUCCESSFUL_REDEEM_BOX_ID), timeout=5)
     except TimeoutException:
         logger.info("Code couldn't be redeemed!")
         return
