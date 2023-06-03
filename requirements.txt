@@ -14,6 +14,7 @@ pycparser==2.21 ; python_version >= "3.9" and os_name == "nt" and implementation
 pyotp==2.8.0 ; python_version >= "3.9" and python_version < "4.0"
 pysocks==1.7.1 ; python_version >= "3.9" and python_version < "4.0"
 python-dotenv==1.0.0 ; python_version >= "3.9" and python_version < "4.0"
+pyvirtualdisplay==3.0 ; python_version >= "3.9" and python_version < "4.0"
 pyyaml==6.0 ; python_version >= "3.9" and python_version < "4.0"
 requests==2.31.0 ; python_version >= "3.9" and python_version < "4.0"
 selenium-stealth==1.0.6 ; python_version >= "3.9" and python_version < "4.0"

@@ -2,6 +2,7 @@
 
 import os
 
+from pyvirtualdisplay.display import Display
 from requests.exceptions import RequestException
 
 from amz_tango_card_scraper.amazon_redeemer.amazon_redeemer import (
@@ -72,6 +73,12 @@ def main() -> None:
     # **************************************************************
     # Get Selenium browser
     # **************************************************************
+    # Start virtual display if enabled
+    if config.script.get("virtual_display", False) and not config.script.get("headless", True):
+        logger.info("Starting virtual display...")
+        Display(visible=False, size=(1920, 1080)).start()
+        logger.info("Virtual display started successfully")
+
     logger.info("Loading Selenium browser...")
     browser = get_chrome_browser(
         headless=config.script.get("headless", True),

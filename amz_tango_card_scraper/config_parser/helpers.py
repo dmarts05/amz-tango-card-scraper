@@ -78,6 +78,7 @@ def verify_script_section(script: Dict[str, bool]) -> Dict[str, bool]:
     required_fields = (
         "no_images",
         "headless",
+        "virtual_display",
         "trash",
         "redeem_amz",
         "no_webdriver_manager",

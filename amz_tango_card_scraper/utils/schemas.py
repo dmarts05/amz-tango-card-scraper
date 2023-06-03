@@ -19,6 +19,7 @@ class ConfigFile(NamedTuple):
     script: the Script section of the config file
         - no_images: whether to disable images in the browser
         - headless: whether to run the browser in headless mode
+        - virtual_display: whether to use a virtual display
         - trash: whether to trash the emails after scraping
         - redeem_amz: whether to redeem the amazon gift cards
         - no_webdriver_manager: whether to disable the webdriver manager
