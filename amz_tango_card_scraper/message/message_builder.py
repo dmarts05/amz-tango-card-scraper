@@ -27,7 +27,7 @@ def build_tango_cards_message(tango_cards: List[TangoCard]) -> str:
     return title + body
 
 
-def build_amazon_cards_message(amazon_cards: List[AmazonCard], balance_results: Tuple[str, str]) -> str:
+def build_amazon_cards_message(amazon_cards: List[AmazonCard], balance_results: Tuple[str, str] = ("", "")) -> str:
     """
     Builds a message that contains the amazon cards.
 

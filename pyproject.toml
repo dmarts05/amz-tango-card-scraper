@@ -1,10 +1,13 @@
 [tool.poetry]
 name = "amz-tango-card-scraper"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Python project that automates the process of scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails."
 authors = ["dmarts05 <dmarts05@estudiantes.unileon.es>"]
 readme = "README.md"
 packages = [{include = "amz_tango_card_scraper"}]
+
+[tool.poetry.scripts]
+amz-tcs = "amz_tango_card_scraper.__main__:main"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <4.0"

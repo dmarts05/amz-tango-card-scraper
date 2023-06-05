@@ -122,14 +122,11 @@ def main() -> None:
     # **************************************************************
     # Build message that is going to be stored and/or sent
     # **************************************************************
-    if config.script.get("redeem_amz", False):
-        message = (
-            build_tango_cards_message(tango_cards=tango_cards)
-            + "\n\n"
-            + build_amazon_cards_message(amazon_cards=amazon_cards, balance_results=balance_results)
-        )
-    else:
-        message = build_tango_cards_message(tango_cards=tango_cards)
+    message = (
+        build_tango_cards_message(tango_cards=tango_cards)
+        + "\n\n"
+        + build_amazon_cards_message(amazon_cards=amazon_cards, balance_results=balance_results)
+    )
     logger.debug(f"Message: {message}")
     # Get path of the file that is going to store the message
     message_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results.txt"))
