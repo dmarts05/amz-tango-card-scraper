@@ -81,7 +81,6 @@ def verify_script_section(script: Dict[str, bool]) -> Dict[str, bool]:
         "virtual_display",
         "trash",
         "redeem_amz",
-        "no_webdriver_manager",
     )
     if not all(field in script for field in required_fields):
         raise ValueError("Missing required field(s) in Script section of config file.")

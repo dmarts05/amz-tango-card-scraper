@@ -22,7 +22,6 @@ class ConfigFile(NamedTuple):
         - virtual_display: whether to use a virtual display
         - trash: whether to trash the emails after scraping
         - redeem_amz: whether to redeem the amazon gift cards
-        - no_webdriver_manager: whether to disable the webdriver manager
     proxies:
         - enable: whether to enable proxies for the browser
         - list: a list of proxies to use

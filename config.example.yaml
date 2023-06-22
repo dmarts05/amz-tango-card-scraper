@@ -28,7 +28,6 @@ script:
   virtual_display: False # Set to True to run Selenium in a virtual display. Not compatible with headless mode
   trash: False # Set to True to move checked emails to trash
   redeem_amz: False # Set to True to redeem Amazon codes automatically
-  no_webdriver_manager: False # Set to True to disable webdriver_manager
 
 # Proxy configuration
 # Note 1: The program will fall back to no proxy if the proxy list is empty or if all proxies fail

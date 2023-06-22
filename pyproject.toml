@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "amz-tango-card-scraper"
-version = "1.0.1"
+version = "1.0.2"
 description = "A Python project that automates the process of scraping and redeeming Amazon Gift Card codes from Microsoft Rewards emails."
 authors = ["dmarts05 <dmarts05@estudiantes.unileon.es>"]
 readme = "README.md"
@@ -13,12 +13,11 @@ amz-tcs = "amz_tango_card_scraper.__main__:main"
 python = ">=3.9, <4.0"
 requests = "^2.30.0"
 selenium = "^4.9.1"
-webdriver-manager = "^3.8.6"
 pyyaml = "^6.0"
 pyotp = "^2.8.0"
 beautifulsoup4 = "^4.12.2"
-selenium-stealth = "^1.0.6"
 pyvirtualdisplay = "^3.0"
+undetected-chromedriver = "^3.5.0"
 
 [tool.poetry.group.dev]
 optional = true
