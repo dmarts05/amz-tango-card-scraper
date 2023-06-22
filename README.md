@@ -80,19 +80,24 @@ If you want to contribute to the project or run the development environment, fol
     ```bash
     poetry install --with dev
     ```
-2. Format the code:
+2. Install pre-commit hooks:
+    ```bash
+    poetry run pre-commit install
+    ```
+    This will install pre-commit hooks that will run every time you commit changes to the repository.
+3. Format the code:
     ```bash
     poetry run black amz_tango_card_scraper
     ```
-3. Lint the code:
+4. Lint the code:
     ```bash
     poetry run flake8 amz_tango_card_scraper
     ```
-4. Run static type checking:
+5. Run static type checking:
     ```bash
     poetry run mypy amz_tango_card_scraper
     ```
-5. Run the tests:
+6. Run the tests:
     ```bash
     poetry run pytest tests
     ```
@@ -100,11 +105,11 @@ If you want to contribute to the project or run the development environment, fol
     ```bash
     "poetry run pytest --cov=amz_tango_card_scraper --cov-report=xml tests"
     ```
-6. Generate the documentation:
+7. Generate the documentation:
     ```bash
     cd docs && poetry run make html
     ```
-7. Do everything at once (except for generating the documentation):
+8. Do everything at once (except for generating the documentation and installing steps):
     ```bash
     poetry run pre-commit run --all-files
     ```
