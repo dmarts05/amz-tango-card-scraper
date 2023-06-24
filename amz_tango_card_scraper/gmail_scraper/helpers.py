@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 
 from amz_tango_card_scraper.utils.schemas import TangoCard
 
+from .constants import SECURITY_CODE_CLASS, TANGO_LINK_CLASS
+
 
 def get_body_of_email(msg: Message) -> str:  # type: ignore
     """
@@ -37,8 +39,6 @@ def extract_tango_card_from_body(body: str) -> TangoCard:
     Returns:
         Extracted Tango Card.
     """
-    from .constants import SECURITY_CODE_CLASS, TANGO_LINK_CLASS
-
     soup = BeautifulSoup(body, "html.parser")
 
     # Extract the security code
