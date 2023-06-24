@@ -42,11 +42,11 @@ def scrape_tango_cards(email: str, app_password: str, from_list: List[str], tras
 
         # Iterate over all the emails
         for msg_id in msg_ids[0].split():
+            # Fetch the email flags for the given ID
+            _, flags_data = mail.fetch(msg_id, "(FLAGS)")
+
             # Fetch the email data (RFC822) for the given ID
             _, msg_data = mail.fetch(msg_id, "(RFC822)")
-
-            # Get the status of the email
-            _, flags_data = mail.fetch(msg_id, "(FLAGS)")
 
             # Iterate over all the responses
             for response in msg_data:
